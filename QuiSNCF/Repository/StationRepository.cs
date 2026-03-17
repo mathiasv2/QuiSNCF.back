@@ -10,7 +10,7 @@ public class StationRepository(GameDbContext db) : IStationRepository
      premier joueur de la journée fasse le tirage de la journée pour tout le monde, plus simple et plus safe
      */
     
-    public async Task<Station> GetRandomStation()
+    public async Task<Station?> GetRandomStation()
     {
         Random rdn = new Random();
         
@@ -29,14 +29,15 @@ public class StationRepository(GameDbContext db) : IStationRepository
 
         return availableStations[index];
     }
-
+    
     public async Task<Station?> GetTodayStation()
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
-        var todaysStation = await db.Stations.Where(x => x.LastTimePlayed == today).FirstOrDefaultAsync();
-        if (todaysStation == null)
-            return null;
-        return todaysStation;
+        Station? todaysStation = await db.Stations.Where(x => x.LastTimePlayed == today).FirstOrDefaultAsync();
+        if (todaysStation != null)
+            return todaysStation;
+
+        return await GetRandomStation();
     }
 
     private async Task UpdateStationLastTimePlayed(int id)
