@@ -1,5 +1,6 @@
 using QuiSNCF.Database;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<GameDbContext>(options =>
     options.UseNpgsql(connectionString));
 
+builder.Services.AddControllers();
+
+
+builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
@@ -34,9 +39,19 @@ using (var scope = app.Services.CreateScope())
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    
+    app.MapScalarApiReference(options =>
+    {
+        options.Title = "UrbanFlow Trips API";
+        options.Theme = ScalarTheme.Moon;
+    });
 }
 
 app.UseHttpsRedirection();
 
+
+app.UseHttpsRedirection();  
+app.UseAuthorization();
+app.MapControllers();
 
 app.Run();
