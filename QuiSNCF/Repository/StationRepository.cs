@@ -46,10 +46,18 @@ public class StationRepository(GameDbContext db) : IStationRepository
         if (station == null)
             return;
         station.LastTimePlayed = DateOnly.FromDateTime(DateTime.Today);
+        await db.SaveChangesAsync();
     }
     public async Task CreateStation(Station station)
     {
         await db.Stations.AddAsync(station);
         await db.SaveChangesAsync();
+    }
+    
+    public void DeleteStation(int id)
+    {
+        var station = db.Stations.FirstOrDefault(x => x.StationId == id);
+        db.Stations.Remove(station);
+        db.SaveChanges();
     }
 }

@@ -6,7 +6,7 @@ namespace QuiSNCF.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class StationController(StationRepository repo) : ControllerBase
+public class StationController(IStationRepository repo) : ControllerBase
 {
     [HttpGet("todaysStation")]
     public async Task<Station?> GetRandomStation()
@@ -15,6 +15,12 @@ public class StationController(StationRepository repo) : ControllerBase
         if (station == null)
             return null;
         return station;
+    }
+
+    [HttpDelete("removeStation/{id}")]
+    public void DeleteStation(int id)
+    {
+        repo.DeleteStation(id);
     }
     
 
