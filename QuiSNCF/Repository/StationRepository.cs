@@ -6,10 +6,10 @@ namespace QuiSNCF.Repository;
 
 public class StationRepository(GameDbContext db) : IStationRepository
 {
-    /* TODO : Finalement supprimer le background service et faire en sorte que le
-     premier joueur de la journée fasse le tirage de la journée pour tout le monde, plus simple et plus safe
-     */
-    
+    private async Task<Station?> GetStationById(int id)
+    {
+        return await db.Stations.FirstOrDefaultAsync(x => x.StationId == id);
+    }
     public async Task<Station?> GetRandomStation()
     {
         Random rdn = new Random();
@@ -17,15 +17,16 @@ public class StationRepository(GameDbContext db) : IStationRepository
         var today = DateOnly.FromDateTime(DateTime.Today);
 
         var availableStations = db.Stations
-            .Where(s => s.LastTimePlayed < today || s.LastTimePlayed > today)
+            .Where(s => s.LastTimePlayed < today)
             .ToList();
 
         if (!availableStations.Any())
             return null;
 
-        int index = rdn.Next(availableStations.Count);
+        int index = rdn.Next(1, availableStations.Count);
         
-        await UpdateStationLastTimePlayed(index);
+        await UpdateStationLastTimePlayed(availableStations[index]);
+        Console.WriteLine(index);
 
         return availableStations[index];
     }
@@ -40,11 +41,8 @@ public class StationRepository(GameDbContext db) : IStationRepository
         return await GetRandomStation();
     }
 
-    private async Task UpdateStationLastTimePlayed(int id)
+    private async Task UpdateStationLastTimePlayed(Station station)
     {
-        var station = await db.Stations.FindAsync(id);
-        if (station == null)
-            return;
         station.LastTimePlayed = DateOnly.FromDateTime(DateTime.Today);
         await db.SaveChangesAsync();
     }
