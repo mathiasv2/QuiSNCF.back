@@ -6,10 +6,6 @@ namespace QuiSNCF.Repository;
 
 public class StationRepository(GameDbContext db) : IStationRepository
 {
-    private async Task<Station?> GetStationById(int id)
-    {
-        return await db.Stations.FirstOrDefaultAsync(x => x.StationId == id);
-    }
     public async Task<Station?> GetRandomStation()
     {
         Random rdn = new Random();
