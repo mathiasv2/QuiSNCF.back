@@ -38,12 +38,12 @@ public class StationRepository(GameDbContext db) : IStationRepository
         return await GetRandomStation();
     }
 
-    private async Task<string> GetTodayStation()
+    private async Task<string> GetTodayStationsCity()
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
         var station = await db.Stations.Where(x =>  x.LastTimePlayed == today).FirstOrDefaultAsync();
         if (station != null)
-            return station.Name;
+            return station.City;
         return null;
     }
 
@@ -77,6 +77,7 @@ public class StationRepository(GameDbContext db) : IStationRepository
 
     public async Task<bool> IsInputRight(string input)
     {
-        return input == await GetTodayStation();
+        string todaysCity = await GetTodayStationsCity();
+        return input.ToLower() == todaysCity.ToLower();
     }
 }

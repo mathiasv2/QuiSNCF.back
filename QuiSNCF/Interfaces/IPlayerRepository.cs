@@ -7,4 +7,6 @@ public interface IPlayerRepository
 {
     Task<List<Player>> GetPlayers();
     Task CreatePlayerAsync(CreatePlayerDTO player);
+    Task<List<Player>> GetTodaysBillboard();
+    Task<int> AllTriesToday();
 }

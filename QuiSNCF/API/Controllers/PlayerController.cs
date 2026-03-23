@@ -20,4 +20,18 @@ public class PlayerController(IPlayerRepository repo) : ControllerBase
     {
         return await repo.GetPlayers();
     }
+
+    [HttpGet("getTodayTries")]
+    public async Task<int> GetTodayTries()
+    {
+        return await repo.AllTriesToday();
+    }
+    
+    [HttpGet("getTodayBillboard")]
+    public async Task<List<Player>> GetTodayBillboard()
+    {
+        return await repo.GetTodaysBillboard();
+    }
+    
+    
 }
