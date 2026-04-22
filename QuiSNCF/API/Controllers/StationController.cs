@@ -39,6 +39,13 @@ public class StationController(IStationRepository repo) : ControllerBase
         bool result = await repo.IsInputRight(input);
         return Ok(result);
     }
+
+    [HttpPut("updateStation/{id}")]
+    public async Task<IActionResult> UpdateStation(UpdateStationDTO station, int id)
+    {
+        repo.UpdateStation(station, id);
+        return Ok("Station updated");   
+    }
     
     
 }

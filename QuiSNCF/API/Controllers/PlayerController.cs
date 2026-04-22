@@ -1,3 +1,4 @@
+using System.Net.Sockets;
 using Microsoft.AspNetCore.Mvc;
 using QuiSNCF.DTO;
 using QuiSNCF.Models;
@@ -12,7 +13,9 @@ public class PlayerController(IPlayerRepository repo) : ControllerBase
     [HttpPost("createPlayer")]
     public async Task CreatePlayer([FromBody] CreatePlayerDTO player)
     {
-        await repo.CreatePlayerAsync(player);
+        if (!await repo.DoesPlayerExist(player.Name))
+            await repo.CreatePlayerAsync(player);
+        await repo.UpdatePlayerScore(player.Name, player.Tries);
     }
 
     [HttpGet("getPlayer")]

@@ -10,4 +10,6 @@ public interface IStationRepository
     Task CreateStation(CreateStationDTO station);
     void DeleteStation(int id);
     Task<bool> IsInputRight(string input);
+    public void UpdateStation(UpdateStationDTO updateStation, int id);
+
 }

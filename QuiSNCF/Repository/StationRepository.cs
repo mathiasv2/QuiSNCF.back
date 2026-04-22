@@ -75,6 +75,18 @@ public class StationRepository(GameDbContext db) : IStationRepository
         db.SaveChanges();
     }
 
+    public void UpdateStation(UpdateStationDTO updateStation, int id)
+    {
+        var station = db.Stations.FirstOrDefault(x => x.StationId == id);
+        
+        station.Name = updateStation.Name;
+        station.City = updateStation.City;
+        station.PictureUrl = updateStation.PictureUrl;
+        station.Hint = updateStation.Hint;
+        db.SaveChanges();
+        
+    }
+
     public async Task<bool> IsInputRight(string input)
     {
         string todaysCity = await GetTodayStationsCity();

@@ -9,4 +9,6 @@ public interface IPlayerRepository
     Task CreatePlayerAsync(CreatePlayerDTO player);
     Task<List<Player>> GetTodaysBillboard();
     Task<int> AllTriesToday();
+    Task<bool> DoesPlayerExist(string name);
+    Task UpdatePlayerScore(string playersName, int tries);
 }

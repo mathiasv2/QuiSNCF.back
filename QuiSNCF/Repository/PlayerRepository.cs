@@ -11,6 +11,17 @@ public class PlayerRepository(GameDbContext db) : IPlayerRepository
     {
         return await db.Players.ToListAsync();
     }
+    
+    private async Task<Player?> GetPlayerByName(string name)
+    {
+        return await db.Players.FirstOrDefaultAsync(p => p.Name.Trim().ToLower() == name.Trim().ToLower());
+    }
+
+    public async Task<bool> DoesPlayerExist(string name)
+    {
+        name = name.ToLower().Trim();
+        return await db.Players.AnyAsync(p => p.Name.Trim().ToLower() == name.Trim().ToLower());
+    }
 
     public async Task<List<Player>> GetTodaysBillboard()
     {
@@ -47,6 +58,15 @@ public class PlayerRepository(GameDbContext db) : IPlayerRepository
         };
         
         await db.Players.AddAsync(newPlayer);
+        await db.SaveChangesAsync();
+    }
+
+    public async Task UpdatePlayerScore(string playersName, int tries)
+    { 
+        var player = await GetPlayerByName(playersName);
+        player.Score += CalculateScore(tries);
+        player.Tries += tries;
+        player.ScoreDate = DateOnly.FromDateTime(DateTime.UtcNow);
         await db.SaveChangesAsync();
     }
     
