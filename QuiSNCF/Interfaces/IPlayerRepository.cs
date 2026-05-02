@@ -11,4 +11,6 @@ public interface IPlayerRepository
     Task<int> AllTriesToday();
     Task<bool> DoesPlayerExist(string name);
     Task UpdatePlayerScore(string playersName, int tries);
+    Task<List<Player>> GetBillboard();
+
 }

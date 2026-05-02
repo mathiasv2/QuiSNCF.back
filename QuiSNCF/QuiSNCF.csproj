@@ -25,4 +25,10 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+        <Content Include="Seeds\station.sql">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
 </Project>

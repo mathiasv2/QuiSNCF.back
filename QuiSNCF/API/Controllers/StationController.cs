@@ -46,6 +46,4 @@ public class StationController(IStationRepository repo) : ControllerBase
         repo.UpdateStation(station, id);
         return Ok("Station updated");   
     }
-    
-    
 }

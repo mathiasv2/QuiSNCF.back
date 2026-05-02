@@ -30,6 +30,12 @@ public class PlayerRepository(GameDbContext db) : IPlayerRepository
         return players;
     }
 
+    public async Task<List<Player>> GetBillboard()
+    {
+        var players = await db.Players.OrderBy(x => x.Score).ToListAsync();
+        return players;
+    }
+
     public async Task<int> AllTriesToday()
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
@@ -53,7 +59,7 @@ public class PlayerRepository(GameDbContext db) : IPlayerRepository
         {
             Tries = player.Tries,
             Name = player.Name,
-            Score = CalculateScore(player.Multiplier),
+            Score = CalculateScore(player.Tries),
             ScoreDate = DateOnly.FromDateTime(DateTime.UtcNow)
         };
         

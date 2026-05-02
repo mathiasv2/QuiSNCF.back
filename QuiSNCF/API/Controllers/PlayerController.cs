@@ -30,12 +30,18 @@ public class PlayerController(IPlayerRepository repo) : ControllerBase
     {
         return await repo.AllTriesToday();
     }
-    
+
     [HttpGet("getTodayBillboard")]
     public async Task<List<Player>> GetTodayBillboard()
     {
         return await repo.GetTodaysBillboard();
     }
-    
-    
+
+    [HttpGet("getBillboard")]
+    public async Task<List<Player>> GetBillboard()
+    {
+        return await repo.GetBillboard();
+    }
+
+
 }

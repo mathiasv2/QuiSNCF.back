@@ -23,7 +23,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5174")
+        policy.WithOrigins("http://localhost:5173")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -43,8 +43,16 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<GameDbContext>();
-        
         context.Database.Migrate();
+        
+        if (!context.Stations.Any())
+        {
+            var sql = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Seeds", "station.sql"));
+            Console.WriteLine("Peuplement de la table Station");
+            Console.WriteLine(sql);
+            await context.Database.ExecuteSqlRawAsync(sql);
+        }
+        
         
         Console.WriteLine("Database migrations OK.");
     }

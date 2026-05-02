@@ -20,7 +20,7 @@ services:
     env_file:
       - .env.docker.game
     ports:
-      - "4004:4004"
+      - "4010:4010"
     depends_on:
       game-database:
         condition: service_healthy
