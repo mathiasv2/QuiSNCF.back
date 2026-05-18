@@ -26,7 +26,7 @@ public class PlayerRepository(GameDbContext db) : IPlayerRepository
     public async Task<List<Player>> GetTodaysBillboard()
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
-        var players = await db.Players.Where(x => x.ScoreDate == today).OrderBy(x => x.Score).ToListAsync();
+        var players = await db.Players.Where(x => x.ScoreDate == today).OrderByDescending(x => x.Score).ToListAsync();
         return players;
     }
 
