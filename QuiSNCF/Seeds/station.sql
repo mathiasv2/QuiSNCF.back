@@ -47,4 +47,4 @@ INSERT INTO "Stations" ("Name", "City", "PictureUrl", "Hint", "LastTimePlayed", 
 ('Gare de Tourcoing', 'Tourcoing', '46', 'Textile et Belgique', '2000-01-01', 0.0, 0.0),
 ('Gare de Dunkerque', 'Dunkerque', '47', 'Opération Dynamo', '2000-01-01', 0.0, 0.0),
 ('Gare de Versailles-Chantiers', 'Versailles', '48', 'Le Roi Soleil', '2000-01-01', 0.0, 0.0),
-('Gare de Bourges', 'Bourges', '49', 'Cathédrale et Printemps', '2000-01-01', 0.0, 0.0),
+('Gare de Bourges', 'Bourges', '49', 'Cathédrale et Printemps', '2000-01-01', 0.0, 0.0);
