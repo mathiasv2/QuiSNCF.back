@@ -32,7 +32,7 @@ public class PlayerRepository(GameDbContext db) : IPlayerRepository
 
     public async Task<List<Player>> GetBillboard()
     {
-        var players = await db.Players.OrderBy(x => x.Score).ToListAsync();
+        var players = await db.Players.OrderByDescending(x => x.Score).ToListAsync();
         return players;
     }
 
