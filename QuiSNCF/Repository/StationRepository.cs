@@ -5,7 +5,7 @@ using QuiSNCF.Models;
 
 namespace QuiSNCF.Repository;
 
-public class StationRepository(GameDbContext db, ILogger logger) : IStationRepository
+public class StationRepository(GameDbContext db, ILogger<StationRepository> logger) : IStationRepository
 {
     public async Task<Station?> GetRandomStation()
     {

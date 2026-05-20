@@ -5,7 +5,7 @@ using QuiSNCF.Models;
 
 namespace QuiSNCF.Repository;
 
-public class PlayerRepository(GameDbContext db, ILogger logger) : IPlayerRepository
+public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger) : IPlayerRepository
 {
     public async Task<List<Player>> GetPlayers()
     {
