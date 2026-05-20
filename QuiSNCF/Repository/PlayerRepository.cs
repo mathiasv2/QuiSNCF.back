@@ -5,7 +5,7 @@ using QuiSNCF.Models;
 
 namespace QuiSNCF.Repository;
 
-public class PlayerRepository(GameDbContext db) : IPlayerRepository
+public class PlayerRepository(GameDbContext db, ILogger logger) : IPlayerRepository
 {
     public async Task<List<Player>> GetPlayers()
     {
@@ -17,6 +17,16 @@ public class PlayerRepository(GameDbContext db) : IPlayerRepository
         return await db.Players.FirstOrDefaultAsync(p => p.Name.Trim().ToLower() == name.Trim().ToLower());
     }
 
+    public async Task<bool> HasPlayerPlayedToday(string playerName)
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        return await db.Players.AnyAsync(p =>
+            p.Name.Trim().ToLower() == playerName.Trim().ToLower()
+            && p.ScoreDate == today
+        );
+    }
+    
     public async Task<bool> DoesPlayerExist(string name)
     {
         name = name.ToLower().Trim();
@@ -65,15 +75,32 @@ public class PlayerRepository(GameDbContext db) : IPlayerRepository
         
         await db.Players.AddAsync(newPlayer);
         await db.SaveChangesAsync();
+        
+        logger.Success($"Joueur {player.Name} a joué pour la première fois avec {player.Tries} essais");
     }
 
     public async Task UpdatePlayerScore(string playersName, int tries)
     { 
         var player = await GetPlayerByName(playersName);
+        
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        if (player.ScoreDate == today)
+        {
+            logger.LogWarning("[TRICHEUR] Le joueur {PlayerName} a déjà joué aujourd'hui",
+                playersName
+            );
+
+            return;
+        }
+        
         player.Score += CalculateScore(tries);
         player.Tries += tries;
         player.ScoreDate = DateOnly.FromDateTime(DateTime.UtcNow);
         await db.SaveChangesAsync();
+        
+        logger.Success($"Joueur déjà existant {playersName} a joué aujourd'hui et a fait {player.Score} points");
+        
     }
     
 }

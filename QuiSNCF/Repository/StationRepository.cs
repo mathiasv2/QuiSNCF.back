@@ -5,13 +5,15 @@ using QuiSNCF.Models;
 
 namespace QuiSNCF.Repository;
 
-public class StationRepository(GameDbContext db) : IStationRepository
+public class StationRepository(GameDbContext db, ILogger logger) : IStationRepository
 {
     public async Task<Station?> GetRandomStation()
     {
         Random rdn = new Random();
         
         var today = DateOnly.FromDateTime(DateTime.Today);
+        
+        logger.LogInformation($"Sélection de la gare du jour à {TimeOnly.FromDateTime(DateTime.Now)}");
 
         var availableStations = db.Stations
             .Where(s => s.LastTimePlayed < today)
@@ -22,8 +24,14 @@ public class StationRepository(GameDbContext db) : IStationRepository
 
         int index = rdn.Next(1, availableStations.Count);
         
+        logger.Success($"Station du jour sélectionnée : " +
+                       $"Ville : {availableStations[index].City}," +
+                       $"Dernière fois qu'elle a été joué : {availableStations[index].LastTimePlayed};" +
+                       $"Nom de la gare : {availableStations[index].Name}");
+        
         await UpdateStationLastTimePlayed(availableStations[index]);
-        Console.WriteLine(index);
+
+
 
         return availableStations[index];
     }
@@ -96,6 +104,8 @@ public class StationRepository(GameDbContext db) : IStationRepository
         Random rdn = new Random();
         double x = rdn.NextDouble();
         double y = rdn.NextDouble();
+        
+        logger.Success($"Zoom du jour : {x},{y}");
         return (x, y);
     }
 
