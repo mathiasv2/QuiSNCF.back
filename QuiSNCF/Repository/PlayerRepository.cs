@@ -49,17 +49,15 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
     public async Task<int> AllTriesToday()
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
-        var tries = await db.Players.Where(x => x.ScoreDate == today).SumAsync(x => x.Score);
+        var tries = await db.Players.Where(x => x.ScoreDate == today).SumAsync(x => x.Tries);
         return tries;
         
     }
 
     private int CalculateScore(int multiplier)
     {
-        int score = 5000;
-        int lostPoints = 323 * multiplier;
-        score -= lostPoints;
-        return score;
+        int score = 5000 - (323 * multiplier);
+        return Math.Max(500, score);
     }
 
     public async Task CreatePlayerAsync(CreatePlayerDTO player)
