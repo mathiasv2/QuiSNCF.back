@@ -4,7 +4,7 @@ using QuiSNCF.Models;
 
 namespace QuiSNCF.Repository;
 
-public class WordRepository(GameDbContext db, ILogger<WordRepository> logger)
+public class WordRepository(GameDbContext db, ILogger<WordRepository> logger) : IWordRepository
 {
     public async Task<Word?> GetOrPickTodayWord()
     {

@@ -27,31 +27,31 @@ public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository>
             return BadRequest("Nombre d'essais invalide");
         }
             
-
-        if (!await repo.DoesPlayerExist(player.Name))
-            await repo.CreatePlayerAsync(player);
-        else
-            await repo.UpdatePlayerScore(player.Name, player.Tries);
+        await repo.SavePlayAsync(player, player.GameType);
 
         return Ok();
     }
 
+    /*
     [HttpGet("getPlayer")]
     public async Task<List<Player>> GetAll()
     {
         return await repo.GetPlayers();
     }
+    
+    
 
     [HttpGet("getTodayTries")]
     public async Task<int> GetTodayTries()
     {
         return await repo.AllTriesToday();
     }
+    */
 
-    [HttpGet("getTodayBillboard")]
-    public async Task<List<Player>> GetTodayBillboard()
+    [HttpGet("getTodayBillboard/{gameType}")]
+    public async Task<List<PlayerScoreDTO>> GetTodayBillboard(GameType gameType)
     {
-        return await repo.GetTodaysBillboard();
+        return await repo.GetBillboardByGame(gameType);
     }
 
     [HttpGet("getBillboard")]

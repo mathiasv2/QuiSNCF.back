@@ -29,7 +29,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         );
     }
     
-    public async Task<List<PlayerScoreDTO>> GetTodaysBillboard(GameType gameType)
+    public async Task<List<PlayerScoreDTO>> GetBillboardByGame(GameType gameType)
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
 
