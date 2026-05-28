@@ -17,9 +17,8 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         return await db.Players.FirstOrDefaultAsync(p => p.Name.Trim().ToLower() == name.Trim().ToLower());
     }
     
-    
 
-    public async Task<bool> HasPlayerPlayedToday(string playerName)
+    private async Task<bool> HasPlayerPlayedToday(string playerName, GameType gameType)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
@@ -30,18 +29,28 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         );
     }
     
+    public async Task<List<PlayerScoreDTO>> GetTodaysBillboard(GameType gameType)
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+
+        return await db.DailyPlays
+            .Include(dp => dp.Player)
+            .Where(dp => dp.PlayedDate == today && dp.GameType == gameType)
+            .OrderByDescending(dp => dp.Score)
+            .Select(dp => new PlayerScoreDTO
+            {
+                Name = dp.Player.Name,
+                TotalScore = dp.Score,
+            })
+            .ToListAsync();
+    }
+    
     public async Task<bool> DoesPlayerExist(string name)
     {
         name = name.ToLower().Trim();
         return await db.Players.AnyAsync(p => p.Name.Trim().ToLower() == name.Trim().ToLower());
     }
-
-    public async Task<List<Player>> GetTodaysBillboard()
-    {
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        var players = await db.Players.Where(x => x.ScoreDate == today).OrderByDescending(x => x.Score).ToListAsync();
-        return players;
-    }
+    
 
     public async Task<List<Player>> GetBillboard()
     {
@@ -49,13 +58,16 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         return players;
     }
 
-    public async Task<int> AllTriesToday()
-    {
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        var tries = await db.Players.Where(x => x.ScoreDate == today).SumAsync(x => x.Tries);
-        return tries;
-        
-    }
+    /*
+    public async Task<int> AllTriesToday(GameType gameType)
+       {
+           var today = DateOnly.FromDateTime(DateTime.Today);
+
+           return await db.DailyPlays
+               .Where(dp => dp.PlayedDate == today && dp.GameType == gameType)
+               .SumAsync(dp => dp.Tries);
+       }
+    */
 
     private int CalculateScore(int multiplier)
     {
@@ -71,7 +83,6 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
             Tries = player.Tries,
             Name = player.Name,
             Score = CalculateScore(player.Tries),
-            ScoreDate = DateOnly.FromDateTime(DateTime.UtcNow)
         };
         
         await db.Players.AddAsync(newPlayer);
@@ -79,25 +90,51 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         
         logger.Success($"Joueur {player.Name} a joué pour la première fois avec {player.Tries} essais");
     }
+    
+    public async Task SavePlayAsync(CreatePlayerDTO dto, GameType gameType)
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var player = await GetPlayerByName(dto.Name);
+
+        if (player == null)
+        {
+            await CreatePlayerAsync(dto);
+        }
+
+        bool alreadyPlayed = await HasPlayerPlayedToday(dto.Name, gameType);
+
+        if (alreadyPlayed)
+        {
+            logger.LogWarning("[TRICHEUR] {PlayerName} a déjà joué en mode {GameType} aujourd'hui",
+                dto.Name, gameType);
+            return;
+        }
+
+        var dailyPlay = new DailyPlay
+        {
+            PlayerId = player.PlayerId,
+            GameType = gameType,
+            Score = CalculateScore(dto.Tries),
+            Tries = dto.Tries,
+            PlayedDate = today
+        };
+
+        await db.DailyPlays.AddAsync(dailyPlay);
+        await db.SaveChangesAsync();
+        
+        await UpdatePlayerScore(dto.Name, dto.Tries);
+
+        logger.Success($"{dto.Name} a joué en mode {gameType} avec {dto.Tries} essais → {dailyPlay.Score} pts");
+    }
 
     public async Task UpdatePlayerScore(string playersName, int tries)
     { 
         var player = await GetPlayerByName(playersName);
         
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-
-        if (player.ScoreDate == today)
-        {
-            logger.LogWarning("[TRICHEUR] Le joueur {PlayerName} a déjà joué aujourd'hui",
-                playersName
-            );
-
-            return;
-        }
         
         player.Score += CalculateScore(tries);
         player.Tries += tries;
-        player.ScoreDate = DateOnly.FromDateTime(DateTime.UtcNow);
         await db.SaveChangesAsync();
         
         logger.Success($"Joueur déjà existant {playersName} a joué aujourd'hui et a fait {player.Score} points");

@@ -23,11 +23,11 @@ public class GameDbContext : Microsoft.EntityFrameworkCore.DbContext
 
         modelBuilder.Entity<Word>()
             .HasKey(x => x.WordId);
-        
+
         modelBuilder.Entity<DailyPlay>()
             .HasOne(dp => dp.Player)
             .WithMany(p => p.DailyPlays)
-            .HasForeignKey(dp => dp.PlayerId)
+            .HasForeignKey(dp => dp.PlayerId);
         
         base.OnModelCreating(modelBuilder);
     }
