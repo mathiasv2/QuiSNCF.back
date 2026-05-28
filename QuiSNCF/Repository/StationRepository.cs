@@ -22,7 +22,7 @@ public class StationRepository(GameDbContext db, ILogger<StationRepository> logg
         if (!availableStations.Any())
             return null;
 
-        int index = rdn.Next(1, availableStations.Count);
+        int index = rdn.Next(0, availableStations.Count);
         
         logger.Success($"Station du jour sélectionnée : " +
                        $"Ville : {availableStations[index].City}," +
