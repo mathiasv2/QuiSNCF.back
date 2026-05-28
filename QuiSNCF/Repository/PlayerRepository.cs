@@ -16,14 +16,17 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
     {
         return await db.Players.FirstOrDefaultAsync(p => p.Name.Trim().ToLower() == name.Trim().ToLower());
     }
+    
+    
 
     public async Task<bool> HasPlayerPlayedToday(string playerName)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
-        return await db.Players.AnyAsync(p =>
-            p.Name.Trim().ToLower() == playerName.Trim().ToLower()
-            && p.ScoreDate == today
+        return await db.DailyPlays.AnyAsync(dp =>
+            dp.Player.Name.Trim().ToLower() == playerName.Trim().ToLower()
+            && dp.GameType == gameType
+            && dp.PlayedDate == today
         );
     }
     
