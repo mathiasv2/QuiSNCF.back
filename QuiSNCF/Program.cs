@@ -50,6 +50,16 @@ using (var scope = app.Services.CreateScope())
             await context.Database.ExecuteSqlRawAsync(sql);
         }
 
+        if (!context.Words.Any())
+        {
+            var sql = await File.ReadAllTextAsync(
+                Path.Combine(AppContext.BaseDirectory, "Seeds", "word.sql"));
+            Console.WriteLine("Peuplement de la table Station");
+            await context.Database.ExecuteSqlRawAsync(sql);
+        }
+        
+        
+
         Console.WriteLine("Database migrations OK.");
     }
     catch (Exception ex)
