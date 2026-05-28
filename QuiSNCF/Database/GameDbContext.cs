@@ -9,6 +9,7 @@ public class GameDbContext : Microsoft.EntityFrameworkCore.DbContext
 
     public DbSet<Player> Players { get; set; }
     public DbSet<Station> Stations { get; set; }
+    public DbSet<Word>  Words { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -17,6 +18,9 @@ public class GameDbContext : Microsoft.EntityFrameworkCore.DbContext
 
         modelBuilder.Entity<Station>()
             .HasKey(x => x.StationId);
+
+        modelBuilder.Entity<Word>()
+            .HasKey(x => x.WordId);
         
         base.OnModelCreating(modelBuilder);
     }
