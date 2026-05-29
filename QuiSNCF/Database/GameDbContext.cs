@@ -18,6 +18,14 @@ public class GameDbContext : Microsoft.EntityFrameworkCore.DbContext
         modelBuilder.Entity<Player>()
             .HasKey(x => x.PlayerId);
 
+        modelBuilder.Entity<Player>()
+            .HasData(new Player
+            {
+                PlayerId = 1,
+                Name = "Caca",
+                Score = 100,
+                Tries = 1
+            });
 
         modelBuilder.Entity<Station>()
             .HasKey(x => x.StationId);
