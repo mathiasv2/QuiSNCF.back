@@ -136,9 +136,6 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         player.Score += CalculateScore(tries);
         player.Tries += tries;
         await db.SaveChangesAsync();
-        
-        logger.Success($"Joueur déjà existant {playersName} a joué aujourd'hui et a fait {player.Score} points");
-        
     }
     
 }
