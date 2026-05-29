@@ -60,12 +60,6 @@ namespace QuiSNCF.Migrations
             columns: new[] { "PlayerId", "Name", "Score", "Tries" },
             values: new object[] { 1, "Caca", 100, 1 });
 
-        migrationBuilder.Sql(@"
-            INSERT INTO ""DailyPlays"" (""PlayerId"", ""GameType"", ""Score"", ""Tries"", ""PlayedDate"")
-            SELECT ""PlayerId"", 0, ""Score"", ""Tries"", ""ScoreDate""
-            FROM ""Players""
-            WHERE ""ScoreDate"" IS NOT NULL AND ""Score"" > 0
-        ");
 
         migrationBuilder.DropColumn(
             name: "ScoreDate",
