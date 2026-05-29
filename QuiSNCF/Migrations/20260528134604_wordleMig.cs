@@ -54,6 +54,11 @@ namespace QuiSNCF.Migrations
             name: "IX_DailyPlays_PlayerId",
             table: "DailyPlays",
             column: "PlayerId");
+        
+        migrationBuilder.InsertData(
+            table: "Players",
+            columns: new[] { "PlayerId", "Name", "Score", "Tries" },
+            values: new object[] { 1, "Caca", 100, 1 });
 
         migrationBuilder.Sql(@"
             INSERT INTO ""DailyPlays"" (""PlayerId"", ""GameType"", ""Score"", ""Tries"", ""PlayedDate"")
