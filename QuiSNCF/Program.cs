@@ -54,7 +54,7 @@ using (var scope = app.Services.CreateScope())
         {
             var sql = await File.ReadAllTextAsync(
                 Path.Combine(AppContext.BaseDirectory, "Seeds", "word.sql"));
-            Console.WriteLine("Peuplement de la table Station");
+            Console.WriteLine("Peuplement de la table Words");
             await context.Database.ExecuteSqlRawAsync(sql);
         }
         

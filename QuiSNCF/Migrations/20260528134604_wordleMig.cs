@@ -11,54 +11,61 @@ namespace QuiSNCF.Migrations
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropColumn(
-                name: "ScoreDate",
-                table: "Players");
+{
+        migrationBuilder.CreateTable(
+            name: "DailyPlays",
+            columns: table => new
+            {
+                DailyPlayId = table.Column<int>(type: "integer", nullable: false)
+                    .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                PlayerId = table.Column<int>(type: "integer", nullable: false),
+                GameType = table.Column<int>(type: "integer", nullable: false),
+                PlayedDate = table.Column<DateOnly>(type: "date", nullable: false),
+                Score = table.Column<int>(type: "integer", nullable: false),
+                Tries = table.Column<int>(type: "integer", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_DailyPlays", x => x.DailyPlayId);
+                table.ForeignKey(
+                    name: "FK_DailyPlays_Players_PlayerId",
+                    column: x => x.PlayerId,
+                    principalTable: "Players",
+                    principalColumn: "PlayerId",
+                    onDelete: ReferentialAction.Cascade);
+            });
 
-            migrationBuilder.CreateTable(
-                name: "DailyPlays",
-                columns: table => new
-                {
-                    DailyPlayId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PlayerId = table.Column<int>(type: "integer", nullable: false),
-                    GameType = table.Column<int>(type: "integer", nullable: false),
-                    PlayedDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    Score = table.Column<int>(type: "integer", nullable: false),
-                    Tries = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DailyPlays", x => x.DailyPlayId);
-                    table.ForeignKey(
-                        name: "FK_DailyPlays_Players_PlayerId",
-                        column: x => x.PlayerId,
-                        principalTable: "Players",
-                        principalColumn: "PlayerId",
-                        onDelete: ReferentialAction.Cascade);
-                });
+        migrationBuilder.CreateTable(
+            name: "Words",
+            columns: table => new
+            {
+                WordId = table.Column<int>(type: "integer", nullable: false)
+                    .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                WordName = table.Column<string>(type: "text", nullable: false),
+                Definition = table.Column<string>(type: "text", nullable: false),
+                LastTimePlayed = table.Column<DateOnly>(type: "date", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_Words", x => x.WordId);
+            });
 
-            migrationBuilder.CreateTable(
-                name: "Words",
-                columns: table => new
-                {
-                    WordId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    WordName = table.Column<string>(type: "text", nullable: false),
-                    Definition = table.Column<string>(type: "text", nullable: false),
-                    LastTimePlayed = table.Column<DateOnly>(type: "date", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Words", x => x.WordId);
-                });
+        migrationBuilder.CreateIndex(
+            name: "IX_DailyPlays_PlayerId",
+            table: "DailyPlays",
+            column: "PlayerId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_DailyPlays_PlayerId",
-                table: "DailyPlays",
-                column: "PlayerId");
-        }
+        migrationBuilder.Sql(@"
+            INSERT INTO ""DailyPlays"" (""PlayerId"", ""GameType"", ""Score"", ""Tries"", ""PlayedDate"")
+            SELECT ""PlayerId"", 0, ""Score"", ""Tries"", ""ScoreDate""
+            FROM ""Players""
+            WHERE ""ScoreDate"" IS NOT NULL AND ""Score"" > 0
+        ");
+
+        migrationBuilder.DropColumn(
+            name: "ScoreDate",
+            table: "Players");
+    }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
