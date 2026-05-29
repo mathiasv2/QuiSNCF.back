@@ -91,6 +91,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         logger.Success($"Joueur {player.Name} a joué pour la première fois avec {player.Tries} essais");
     }
     
+    // TODO : Fix là où ça casse ici jsp où
     public async Task SavePlayAsync(CreatePlayerDTO dto, GameType gameType)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
