@@ -1,5 +1,6 @@
 using QuiSNCF.Database;
 using Microsoft.EntityFrameworkCore;
+using QuiSNCF.Middleware;
 using QuiSNCF.Repository;
 using Scalar.AspNetCore;
 
@@ -82,6 +83,7 @@ if (app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
+app.UseMiddleware<ApiKeyMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 

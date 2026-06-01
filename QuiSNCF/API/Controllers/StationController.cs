@@ -17,6 +17,14 @@ public class StationController(IStationRepository repo) : ControllerBase
             return null;
         return Ok(station);
     }
+    
+    [HttpPost("createStation")]
+    public async Task<IActionResult> CreateStation(CreateStationDTO station)
+    {
+        await repo.CreateStation(station);
+        return Ok("Station created");
+    }
+
     /*
     
 
@@ -28,12 +36,6 @@ public class StationController(IStationRepository repo) : ControllerBase
     }
     
 
-    [HttpPost("createStation")]
-    public async Task<IActionResult> CreateStation(CreateStationDTO station)
-    {
-        await repo.CreateStation(station);
-        return Ok("Station created");
-    }
 
     [HttpPost("checkinput/{input}")]
     public async Task<IActionResult> CheckInput(string input)
