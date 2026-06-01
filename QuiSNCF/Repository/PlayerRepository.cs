@@ -100,6 +100,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         if (player == null)
         {
             await CreatePlayerAsync(dto);
+            player = await GetPlayerByName(dto.Name);
         }
 
         bool alreadyPlayed = await HasPlayerPlayedToday(dto.Name, gameType);
