@@ -34,14 +34,14 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         var today = DateOnly.FromDateTime(DateTime.Today);
 
         return await db.DailyPlays
-            .Include(dp => dp.Player)
-            .Where(dp => dp.PlayedDate == today && dp.GameType == gameType)
-            .OrderByDescending(dp => dp.Score)
-            .Select(dp => new PlayerScoreDTO
+            .Where(dp => dp.GameType == gameType)
+            .GroupBy(dp => dp.Player.Name)
+            .Select(g => new PlayerScoreDTO
             {
-                Name = dp.Player.Name,
-                TotalScore = dp.Score,
+                Name = g.Key,
+                TotalScore = g.Sum(dp => dp.Score),
             })
+            .OrderByDescending(p => p.TotalScore)
             .ToListAsync();
     }
     
@@ -105,6 +105,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
 
         bool alreadyPlayed = await HasPlayerPlayedToday(dto.Name, gameType);
 
+        
         if (alreadyPlayed)
         {
             logger.LogWarning("[TRICHEUR] {PlayerName} a déjà joué en mode {GameType} aujourd'hui",
