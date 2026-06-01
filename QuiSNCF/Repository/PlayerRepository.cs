@@ -31,8 +31,6 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
     
     public async Task<List<PlayerScoreDTO>> GetBillboardByGame(GameType gameType)
     {
-        var today = DateOnly.FromDateTime(DateTime.Today);
-
         return await db.DailyPlays
             .Where(dp => dp.GameType == gameType)
             .GroupBy(dp => dp.Player.Name)
@@ -44,6 +42,23 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
             .OrderByDescending(p => p.TotalScore)
             .ToListAsync();
     }
+
+    public async Task<List<PlayerScoreDTO>> GetScoreByGameAndPlayer(string playerName, GameType gameType)
+    {
+        return await db.DailyPlays
+            .Include(dp => dp.Player)
+            .Where(dp => dp.Player.Name == playerName && dp.GameType == gameType)
+            .OrderByDescending(dp => dp.Score)
+            .Select(dp => new PlayerScoreDTO
+            {
+                Name = dp.Player.Name,
+                TotalScore = dp.Score,
+            })
+            .ToListAsync();
+    }
+    
+   
+    
     
     public async Task<bool> DoesPlayerExist(string name)
     {
