@@ -18,7 +18,12 @@ public class ApiKeyMiddleware(RequestDelegate next, IConfiguration config)
             {
                 context.Response.StatusCode = 401;
                 await context.Response.WriteAsync("Non autorisé");
+                return; 
+                
             }
+            
+            await next(context); 
+
         }
     }
 }
