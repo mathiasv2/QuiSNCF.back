@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using QuiSNCF.Database;
+using QuiSNCF.DTO;
 using QuiSNCF.Models;
 
 namespace QuiSNCF.Repository;
@@ -43,5 +44,18 @@ public class WordRepository(GameDbContext db, ILogger<WordRepository> logger) : 
 
         if (word == null) return false;
         return string.Equals(input.Trim(), word.WordName.Trim(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    public async Task CreateWord(CreateWordDTO word)
+    {
+        Word newWord = new Word()
+        {
+            LastTimePlayed = word.LastTimePlayed,
+            WordName = word.WordName,
+            Definition = word.Definition,
+        };
+        
+        await db.Words.AddAsync(newWord);
+        await db.SaveChangesAsync();
     }
 }

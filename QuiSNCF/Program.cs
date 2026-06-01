@@ -1,3 +1,5 @@
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 using QuiSNCF.Database;
 using Microsoft.EntityFrameworkCore;
 using QuiSNCF.Middleware;
@@ -8,16 +10,33 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 
+// DB CONTEXT
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<GameDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 builder.Services.AddControllers();
+
+// DEPENDANCY INJECTION
 builder.Services.AddScoped<IStationRepository, StationRepository>();
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IWordRepository, WordRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
+
+// RATE LIMITER
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("fixed", opt =>
+    {
+        opt.PermitLimit = 30;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 0;
+    });
+    
+    options.RejectionStatusCode = 429;
+});
 
 var allowedOrigins = builder.Configuration
     .GetSection("Cors:AllowedOrigins")

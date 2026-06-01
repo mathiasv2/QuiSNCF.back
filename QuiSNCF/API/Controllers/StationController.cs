@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using QuiSNCF.DTO;
 using QuiSNCF.Models;
 using QuiSNCF.Repository;
 
 namespace QuiSNCF.API.Controllers;
 
+[EnableRateLimiting("fixed")]
 [Route("api/[controller]")]
 [ApiController]
 public class StationController(IStationRepository repo) : ControllerBase
