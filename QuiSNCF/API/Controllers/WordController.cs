@@ -7,8 +7,8 @@ namespace QuiSNCF.API.Controllers;
 [ApiController]
 public class WordController(IWordRepository repo): ControllerBase
 {
-    [HttpGet("todaysStation")]
-    public async Task<IActionResult> GetRandomStation()
+    [HttpGet("todaysWord")]
+    public async Task<IActionResult> GetRandomWord()
     {
         var station = await repo.GetOrPickTodayWord();
         if (station == null)
