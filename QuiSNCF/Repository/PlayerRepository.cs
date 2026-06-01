@@ -80,9 +80,9 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
 
         Player newPlayer = new Player()
         {
-            Tries = player.Tries,
+            Tries = 0,
             Name = player.Name,
-            Score = CalculateScore(player.Tries),
+            Score = 0,
         };
         
         await db.Players.AddAsync(newPlayer);
