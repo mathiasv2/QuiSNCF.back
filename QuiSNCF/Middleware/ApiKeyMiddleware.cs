@@ -1,6 +1,6 @@
 namespace QuiSNCF.Middleware;
 
-public class ApiKeyMiddleware(IConfiguration config)
+public class ApiKeyMiddleware(RequestDelegate next, IConfiguration config)
 {
     private const string ApiKeyHeader = "X-Api-Key";
 
@@ -9,7 +9,7 @@ public class ApiKeyMiddleware(IConfiguration config)
         var path = context.Request.Path.Value?.ToLower();
         Console.WriteLine($"[Middleware] Path reçu : {path}"); 
     
-        var protectedRoutes = new[] { "/api/station/createstation", "/api/word/createword" };
+        var protectedRoutes = new[] { "/api/station/createstation",  "/api/word" };
 
         if (protectedRoutes.Any(r => path?.StartsWith(r.ToLower()) == true))
         {
