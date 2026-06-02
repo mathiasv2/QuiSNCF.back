@@ -28,6 +28,13 @@ public class StationController(IStationRepository repo) : ControllerBase
         await repo.CreateStation(station);
         return Ok("Station created");
     }
+    
+    [HttpPut("updateStation/{id}")]
+    public async Task<IActionResult> UpdateStation(UpdateStationDTO station, int id)
+    {
+        repo.UpdateStation(station, id);
+        return Ok("Station updated");   
+    }
 
     /*
     
@@ -48,12 +55,7 @@ public class StationController(IStationRepository repo) : ControllerBase
         return Ok(result);
     }
 
-    [HttpPut("updateStation/{id}")]
-    public async Task<IActionResult> UpdateStation(UpdateStationDTO station, int id)
-    {
-        repo.UpdateStation(station, id);
-        return Ok("Station updated");   
-    }
-    */
+*/
+    
     
 }

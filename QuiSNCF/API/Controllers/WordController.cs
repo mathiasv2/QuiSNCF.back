@@ -28,4 +28,14 @@ public class WordController(IWordRepository repo): ControllerBase
             message = "Word created successfully"
         });
     }
+
+    [HttpPut("updateWord/{id}")]
+    public async Task<IActionResult> UpdateWord(UpdateWordDTO wordDto, int id)
+    {
+        await repo.UpdateWord(wordDto, id);
+        return Ok(new
+        {
+            message = "Word updated successfully"
+        });
+    }
 }
