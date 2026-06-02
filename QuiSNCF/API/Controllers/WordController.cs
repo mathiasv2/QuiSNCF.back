@@ -19,7 +19,7 @@ public class WordController(IWordRepository repo): ControllerBase
         return Ok(station);
     }
 
-    [HttpPost]
+    [HttpPost("createWord")]
     public async Task<IActionResult> CreateWord(CreateWordDTO word)
     {
         await repo.CreateWord(word);

@@ -7,9 +7,12 @@ public class ApiKeyMiddleware(RequestDelegate next, IConfiguration config)
     public async Task InvokeAsync(HttpContext context)
     {
         var path = context.Request.Path.Value?.ToLower();
-        Console.WriteLine($"[Middleware] Path reçu : {path}"); 
-    
-        var protectedRoutes = new[] { "/api/station/createstation",  "/api/word" };
+
+        var protectedRoutes = new[]
+        {
+            "/api/station/createstation",
+            "/api/word"
+        };
 
         if (protectedRoutes.Any(r => path?.StartsWith(r.ToLower()) == true))
         {
@@ -18,12 +21,10 @@ public class ApiKeyMiddleware(RequestDelegate next, IConfiguration config)
             {
                 context.Response.StatusCode = 401;
                 await context.Response.WriteAsync("Non autorisé");
-                return; 
-                
+                return;
             }
-            
-            await next(context); 
-
         }
+
+        await next(context);
     }
 }

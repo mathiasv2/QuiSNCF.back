@@ -19,6 +19,8 @@ public class StationController(IStationRepository repo) : ControllerBase
             return null;
         return Ok(station);
     }
+
+
     
     [HttpPost("createStation")]
     public async Task<IActionResult> CreateStation(CreateStationDTO station)
