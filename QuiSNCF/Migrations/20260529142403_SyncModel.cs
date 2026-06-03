@@ -19,10 +19,7 @@ namespace QuiSNCF.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.InsertData(
-                table: "Players",
-                columns: new[] { "PlayerId", "Name", "Score", "Tries" },
-                values: new object[] { 1, "Caca", 100, 1 });
+          
         }
     }
 }
