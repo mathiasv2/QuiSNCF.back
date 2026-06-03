@@ -73,4 +73,4 @@ INSERT INTO "Words" ("WordName", "Definition", "LastTimePlayed") VALUES
 ('Sabot', '"Sabot frein" - Sabot que les enrayeurs (ou saboteurs) mettent sur la voie pour ralentir les wagons qui descendent de la bosse dans un triage. Le métier de saboteur est pénible et dangereux. De plus il nécessite un grand jugement pour ralentir le wagon suffisamment mais pas trop.', '0001-01-01'),
 ('Serrure', '"Serrure centrale" - Dans certaines gares ou certains postes, serrure permettant d''enclencher des clefs Bourré entre elles.', '0001-01-01'),
 ('Sybic', 'Type de locomotives électriques fonctionnant avec des moteurs SYnchrones et BI-Courant. Elles sont également bi-tension.', '0001-01-01'),
-('Talon', 'Se dit d''une aiguille prise à revers.', '0001-01-01'),
+('Talon', 'Se dit d''une aiguille prise à revers.', '0001-01-01');
