@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using QuiSNCF.DTO;
 using QuiSNCF.Models;
 using QuiSNCF.Repository;
 
 namespace QuiSNCF.API.Controllers;
 
+[EnableRateLimiting("fixed")]
 [Route("api/[controller]")]
 [ApiController]
 public class StationController(IStationRepository repo) : ControllerBase
@@ -18,6 +20,25 @@ public class StationController(IStationRepository repo) : ControllerBase
         return Ok(station);
     }
 
+
+    
+    [HttpPost("createStation")]
+    public async Task<IActionResult> CreateStation(CreateStationDTO station)
+    {
+        await repo.CreateStation(station);
+        return Ok("Station created");
+    }
+    
+    [HttpPut("updateStation/{id}")]
+    public async Task<IActionResult> UpdateStation(UpdateStationDTO station, int id)
+    {
+        repo.UpdateStation(station, id);
+        return Ok("Station updated");   
+    }
+
+    /*
+    
+
     [HttpDelete("removeStation/{id}")]
     public IActionResult DeleteStation(int id)
     {
@@ -26,12 +47,6 @@ public class StationController(IStationRepository repo) : ControllerBase
     }
     
 
-    [HttpPost("createStation")]
-    public async Task<IActionResult> CreateStation(CreateStationDTO station)
-    {
-        await repo.CreateStation(station);
-        return Ok("Station created");
-    }
 
     [HttpPost("checkinput/{input}")]
     public async Task<IActionResult> CheckInput(string input)
@@ -40,10 +55,7 @@ public class StationController(IStationRepository repo) : ControllerBase
         return Ok(result);
     }
 
-    [HttpPut("updateStation/{id}")]
-    public async Task<IActionResult> UpdateStation(UpdateStationDTO station, int id)
-    {
-        repo.UpdateStation(station, id);
-        return Ok("Station updated");   
-    }
+*/
+    
+    
 }

@@ -1,0 +1,76 @@
+INSERT INTO "Words" ("WordName", "Definition", "LastTimePlayed") VALUES
+('Debords', 'Cour et voies où les wagons sont en chargement et déchargement par les clients.', '0001-01-01'),
+('Depot', 'Endroit où on gare et soigne les engins moteurs..', '0001-01-01'),
+('Descente', '"Descente de machine" - Sanction pour faute grave d''un mécanicien. Son autorisation de conduire un train lui est retirée et il doit aller travailler au dépôt ou aux ateliers.', '0001-01-01'),
+('Devers', '     Dans les courbes, il est nécessaire de pencher les voies pour permettre aux trains de passer avec une vitesse acceptable.', '0001-01-01'),
+('Disque', 'Signal présentant, à la fermeture, un disque rouge, la nuit ou en signalisation lumineuse, un feu rouge et un feu jaune.
+     Le disque fermé impose au mécanicien de se mettre en marche à vue aussitôt que possible et de s''arrêter à la première aiguille ou au signal d''entrée. Voir tôle.', '0001-01-01'),
+('Eleves', 'Agents engagés très jeunes, 15/16 ans et qui apprenaient leur métier sur dans les gares pour ensuite gravir les échelons: Facteur mixte, facteur enregistrant, etc. Les agents qui passaient par là connaissaient vraiment leur métier, contrairement à ce qui se passe actuellement où on embauche surtout des gens qui sortent des écoles.', '0001-01-01'),
+('Eteint', 'Pour permettre l''observation d''un panneau accidentellement éteint en block automatique, le panneau précédent porte l''indication avertissement. Par contre en block manuel lumineux, les panneaux à distance portent une plaque A ou D suivant qu''ils peuvent porter un avertissement ou un disque.', '0001-01-01'),
+('Express', 'Se dit d''un train qui ne s''arrête qu''à quelques gares moyennement importantes.
+     Régime de colis qui voyageaient dans les fourgons des trains de voyageurs.', '0001-01-01'),
+('Facteur', '  Grades du service de l''exploitation:
+          Facteur aux écritures. agents n''étant, en principe, pas aptes aux fonctions de sécurité. Ils étaient souvent utilisés comme pointeurs-releveurs que nous appelions des staticiens.
+          Facteur mixte. Comme leur nom l''indique ils faisaient en même temps de la circulation et des tâches commerciales.
+          Facteur enregistrant. Ils étaient plus voués à la circulation, mais faisaient encore souvent du commercial.', '0001-01-01'),
+('Fleche', '     Distance comptée entre l''arc de courbe d''une voie et la corde. Permet de calculer le rayon de courbure.', '0001-01-01'),
+('Fondre', '  Dans les foyers des locomotives à vapeur il y avait une brique en plomb. Si le feu était trop fort et/ou il n''y avait pas assez d''eau, le plomb fondait, d''où détresse de la machine. Inutile de dire que c''était une faute grave pour le chauffeur.', '0001-01-01'),
+('Fourgon', ' Wagon à plusieurs usages:
+     - à bagages, servaient à transporter les bagages enregistrés, les colis et expéditions express,
+     - de queue, était exigé dans certains trains, contenant le chef de train et équipé d''un frein à vis pouvant être utilisé dans certaines circonstances. Dans les trains de voyageurs pouvait aussi être fourgon à bagages.', '0001-01-01'),
+('Fourgon', ' Au début de l''électrification, nombre de voitures à voyageurs n''étaient pas équipées de chauffage électrique. On mettait donc derrière la machine électrique un fourgon contenant une chaudière destinée uniquement à faire de la vapeur pour le chauffage.', '0001-01-01'),
+('Frein', '"En principe frein à vis servant à l''immobilisation d''une machine ou d''un wagon. Certains wagons ont des leviers qui ont le même usage.', '0001-01-01'),
+('Fusees', 'Extrémités des essieux sur lesquelles reposent les coussinets ou qui sont engagées dans les rouleaux.', '0001-01-01'),
+('Gabarit', 'Dimension extrême que doivent respecter les wagons et surtout les chargements.
+     Le gabarit était souvent matérialisé à l''entrée des quais marchandises par des chaînes pendantes. Il existait aussi des gabarits portatifs.', '0001-01-01'),
+('Gare', 'Etablissement dans lequel un train peut avoir une origine ou terminus. En voie unique, un croisement de deux trains de sens contraires peut avoir lieu. Une gare peut être temporaire et cesser le service à certaines heures.', '0001-01-01'),
+('Guetteur', 'Agent chargé de regarder tous les trains qui passent dans la gare pour voir si aucune défectuosité n''existe. En principe, toutes les gares ouvertes au service, tous les postes et même certains passages à niveau, guettent. Du fait de la suppression des gares et des passages à niveau, il y a de moins en moins de guetteurs avec les conséquences sur la sécurité, bien qu''on ait mis des détecteurs de boites chaudes.
+     Si un agent seul dans une gare vous abandonne pour regarder passer un train, sachez qu''il fait son travail.', '0001-01-01'),
+('Guidon', '"Guidon d''arrêt" - Est souvent constitué d''une tige portant un carré à damier rouge et blanc. Il existe aussi des guidons d''arrêt commandés par certains postes.', '0001-01-01'),
+('Homme', '"Homme mort" -  Jadis, sur les locomotives, il y avait deux agents. Maintenant qu''on a supprimé l''un de ces agents, on a installé sur les machines, un dispositif permettant de s''assurer que le conducteur n''ait pas de malaise.', '0001-01-01'),
+('Impaire', 'Se dit d''une circulation qui vient de Paris (ou de l''origine de la ligne si celle-ci n''est pas Paris).', '0001-01-01'),
+('Impasse', '"Cul de sac" - Voie en impasse destinée en général à protéger les voies principales. Quelques fois elles permettent aussi des mouvements de tiroirs.', '0001-01-01'),
+('Criquet', '"Crayon vert" - Inspecteur de comptabilité qui venaient dans les gares vérifier la comptabilité des gares et des recettes. On les appelait aussi des Criquets parce qu''ils écrivaient au crayon vert.', '0001-01-01'),
+('Couvert', 'Wagon à marchandises fermé.', '0001-01-01'),
+('Controle', 'Quand on a fermé un signal ou manoeuvré une aiguille, il faut s''assurer que le signal ou l''aiguille a bien obéit. C''est le rôle d''un dispositif appelé contrôle.', '0001-01-01'),
+('Continu', 'Type de courant électrique dont le sens ne change pas. L''électrification 1500 volts (1,5 KV) est de ce type.', '0001-01-01'),
+('Consigne', 'Ce nom désigne deux choses différentes:
+     - Les objets déposés en garde par les voyageurs,
+     - Des règlements locaux.', '0001-01-01'),
+('Conduite', '"Conduite blanche" - De tels wagons n''ont pas d''organes de freinage, mais ils sont quand même munis de la conduite générale permettant la continuité du fonctionnement du frein sur tout le train.', '0001-01-01'),
+('Complet', 'Un train est réputé complet lorsqu''on a vu passer les signaux de queue. Dans le cas de block manuel ou de cantonnement téléphonique, on ne peut rendre la voie au poste précédent que lorsqu''on a vu les signaux de queue.', '0001-01-01'),
+('Cloches', '"Cloche électriques" - Avant l''envoyer un train, sur certaines voies uniques, il faut l''annoncer avec un certain nombre de coup de cloches. Ces dispositifs servaient surtout à l''annonce aux passages à niveau, mais aussi aux lieux dangereux (tunnels, viaducs, tranchées, etc.) et également moralement pour éviter les nez-à-nez.', '0001-01-01'),
+('Citerne', 'Wagon destiné au transport de liquide.', '0001-01-01'),
+('Large', 'Voies ferrées qui ont un écartement supérieur à la voie normale: Espagne, Russie, etc.', '0001-01-01'),
+('Lanterne', '"Lanterne de queue" - Feu mis à l''arrière du dernier véhicule d''un train. Le jour, peut être remplacé par une plaque. La présence de la (ou les) lanterne de queue (ou de la plaque) permet, outre le repérage de la queue de train par une circulation suivant ce train, d''avoir l''assurance que ce train est complet.', '0001-01-01'),
+('Lame', '"Lame d''aiguille" - Rail taillé en biseau, se déplaçant sur des coussinets, et pouvant s''appliquer contre un autre rail pour permettre de changer la direction des roues des wagons.', '0001-01-01'),
+('Mariage', 'Incident, provoqué la plupart du temps par un choc violent ou un déraillement, où les tampons se trouvent imbriqués l''un dans l''autre. Tirer sur ces wagons provoque à coup sûr un déraillement.', '0001-01-01'),
+('Normale', 'Se dit des voies ferrées à écartement de 1,435 mètres telles qu''elles sont installées dans la plupart des pays. Cet écartement était celui des chariots romains et suivants qui ont laissé des ornières pendant 2 millénaires. Tout naturellement l''écartement a été repris lors de l''établissement des premières voies ferrées en Angleterre.', '0001-01-01'),
+('Omnibus', 'Se dit d''un train qui s''arrête à toutes les gares de la ligne.
+     Se dit aussi des téléphones sélectifs qui permettent d''appeler plusieurs postes ou gares en même temps.', '0001-01-01'),
+('Panneau', 'Tableau vertical, de forme oblongue, noir bordé de blanc, sur lequel sont présentés les divers feux de signalisation.', '0001-01-01'),
+('Passage', '"Passage à niveau" - Croisement au même niveau d''une voie ferrée et d''une route. Il peut être gardé, dans ce cas il est équipé de barrières, ou non dans ce cas ne comporte aucune protection, suivant un classement tenant compte du nombre de trains et de l''importance de la route. Il peut être éventuellement muni de feux clignotants automatiques et de demi-barrières.', '0001-01-01'),
+('Patin', 'Partie évasée du rail qui repose sur la traverse.', '0001-01-01'),
+('Pedale', 'Dispositif actionné par les boudins des roues des trains. Jadis ces dispositifs étaient mécaniques: voir aubine. Elles sont maintenant électromécaniques voire même magnétiques.', '0001-01-01'),
+('Perche', '- de mise à la terre: Perche en matériau isolant qui permet la mise à la terre des caténaires.', '0001-01-01'),
+('Petards', '  Les pétards sont de deux types:
+     - Les pétards à griffes mis sur la voie en cas de danger. Le mécanicien doit tout faire pour se mettre en marche à vue immédiatement ou presque.
+     - Les pétards ou cartouches appuyant les signaux. Le mécanicien doit considérer le signal comme fermé.', '0001-01-01'),
+('Piqure', 'Liasse de feuillets pouvant être remplis d''un seul coup grâce à des papiers carbone incorporés.', '0001-01-01'),
+('Piste', 'Chemin qui suit le rail pour permettre aux agents qui y ont à faire, de suivre la ligne de chemin de fer.', '0001-01-01'),
+('Piston', 'Il s''agit de l''organe qui coulisse dans le cylindre des locomotives à vapeur ou des moteurs diesel.
+     Par analogie, désigne une recommandation faite par quelqu''un de « haut placé ».', '0001-01-01'),
+('Plaque', '"Plaque tournante" - Installation permettant de retourner un wagon ou une locomotive. Jadis, il y en avait dans presque toutes les gares. Maintenant, il n''y en a plus que dans les dépôts.', '0001-01-01'),
+('Poste', 'Etablissement comportant des signaux et éventuellement des aiguilles. Les gares peuvent être des postes ou comporter un ou plusieurs postes.', '0001-01-01'),
+('Poulain', 'Appareil composé de deux poutres parallèles réunies par des entretoises et permettant de charger des tonneaux.', '0001-01-01'),
+('Pousse', 'Pour franchir certaines rampes, il faut apporter un renfort par une machine mise en queue du train. On distingue les pousses attelées et non attelées.', '0001-01-01'),
+('Prolonge', '     Espèce de grosse corde servant à ligaturer les marchandises sur les wagons.', '0001-01-01'),
+('Rapide', 'Se dit d''un train qui ne s''arrête qu''à de très grandes gares.', '0001-01-01'),
+('Regleur', 'Dispositifs permettant de régler la position des sabots freins en fonction de l''usure.', '0001-01-01'),
+('Robinet', '"Robinet d''isolement" - Lorsque les organes de freinage d''un wagon sont défectueux, on ferme le robinet situé entre la conduite générale et les organes de frein. Le wagon devient une conduite blanche.', '0001-01-01'),
+('Rouleau', '"Rouleau compresseur" - Division du personnel dont les passages dans les gares se traduisent par des compressions de personnel. Inutile de dire qu''ils ne sont pas très bien accueillis dans les gares...', '0001-01-01'),
+('Rupture', '"Rupture d''attelage" -  Il peut arriver qu''un attelage se brise pour des raisons diverses. Sur un train normalement freiné, la conduite générale étant rompue, les deux morceaux du train doivent s''arrêter.', '0001-01-01'),
+('Sabot', '"Sabot frein" - Sabot que les enrayeurs (ou saboteurs) mettent sur la voie pour ralentir les wagons qui descendent de la bosse dans un triage. Le métier de saboteur est pénible et dangereux. De plus il nécessite un grand jugement pour ralentir le wagon suffisamment mais pas trop.', '0001-01-01'),
+('Serrure', '"Serrure centrale" - Dans certaines gares ou certains postes, serrure permettant d''enclencher des clefs Bourré entre elles.', '0001-01-01'),
+('Sybic', 'Type de locomotives électriques fonctionnant avec des moteurs SYnchrones et BI-Courant. Elles sont également bi-tension.', '0001-01-01'),
+('Talon', 'Se dit d''une aiguille prise à revers.', '0001-01-01');

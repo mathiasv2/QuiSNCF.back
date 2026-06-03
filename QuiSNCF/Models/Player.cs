@@ -6,5 +6,6 @@ public class Player
     public string Name { get; set; }
     public int Score { get; set; }
     public int Tries { get; set; }
-    public DateOnly ScoreDate { get; set; }
+    public ICollection<DailyPlay> DailyPlays { get; set; } 
+
 }

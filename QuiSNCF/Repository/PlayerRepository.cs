@@ -16,29 +16,58 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
     {
         return await db.Players.FirstOrDefaultAsync(p => p.Name.Trim().ToLower() == name.Trim().ToLower());
     }
+    
 
-    public async Task<bool> HasPlayerPlayedToday(string playerName)
+    private async Task<bool> HasPlayerPlayedToday(string playerName, GameType gameType)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
-        return await db.Players.AnyAsync(p =>
-            p.Name.Trim().ToLower() == playerName.Trim().ToLower()
-            && p.ScoreDate == today
+        return await db.DailyPlays.AnyAsync(dp =>
+            dp.Player.Name.Trim().ToLower() == playerName.Trim().ToLower()
+            && dp.GameType == gameType
+            && dp.PlayedDate == today
         );
     }
+    
+    public async Task<List<PlayerScoreDTO>> GetBillboardByGame(GameType gameType)
+    {
+        return await db.DailyPlays
+            .Where(dp => dp.GameType == gameType)
+            .GroupBy(dp => dp.Player.Name)
+            .Select(g => new PlayerScoreDTO
+            {
+                Name = g.Key,
+                Score = g.Sum(dp => dp.Score),
+            })
+            .OrderByDescending(p => p.Score)
+            .ToListAsync();
+    }
+
+    //TODO: ça marche mais faut que je fasse un nouveau dto pour renvoyer la date avec mais j'ai la flemmme
+    // + faire la vérification avec un tolower() mais pareil la flemme
+    public async Task<List<PlayerScoreDTO>> GetScoreByGameAndPlayer(string playerName, GameType gameType)
+    {
+        return await db.DailyPlays
+            .Include(dp => dp.Player)
+            .Where(dp => dp.Player.Name == playerName && dp.GameType == gameType)
+            .OrderByDescending(dp => dp.Score)
+            .Select(dp => new PlayerScoreDTO
+            {
+                Name = dp.Player.Name,
+                Score = dp.Score,
+            })
+            .ToListAsync();
+    }
+    
+   
+    
     
     public async Task<bool> DoesPlayerExist(string name)
     {
         name = name.ToLower().Trim();
         return await db.Players.AnyAsync(p => p.Name.Trim().ToLower() == name.Trim().ToLower());
     }
-
-    public async Task<List<Player>> GetTodaysBillboard()
-    {
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        var players = await db.Players.Where(x => x.ScoreDate == today).OrderByDescending(x => x.Score).ToListAsync();
-        return players;
-    }
+    
 
     public async Task<List<Player>> GetBillboard()
     {
@@ -46,17 +75,20 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         return players;
     }
 
-    public async Task<int> AllTriesToday()
-    {
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        var tries = await db.Players.Where(x => x.ScoreDate == today).SumAsync(x => x.Tries);
-        return tries;
-        
-    }
+    /*
+    public async Task<int> AllTriesToday(GameType gameType)
+       {
+           var today = DateOnly.FromDateTime(DateTime.Today);
+
+           return await db.DailyPlays
+               .Where(dp => dp.PlayedDate == today && dp.GameType == gameType)
+               .SumAsync(dp => dp.Tries);
+       }
+    */
 
     private int CalculateScore(int multiplier)
     {
-        int score = 5000 - (323 * multiplier);
+        int score = 5000 - 323 * (multiplier - 1);
         return Math.Max(500, score);
     }
 
@@ -65,10 +97,9 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
 
         Player newPlayer = new Player()
         {
-            Tries = player.Tries,
+            Tries = 0,
             Name = player.Name,
-            Score = CalculateScore(player.Tries),
-            ScoreDate = DateOnly.FromDateTime(DateTime.UtcNow)
+            Score = 0,
         };
         
         await db.Players.AddAsync(newPlayer);
@@ -76,29 +107,55 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         
         logger.Success($"Joueur {player.Name} a joué pour la première fois avec {player.Tries} essais");
     }
+    
+    // TODO : Fix là où ça casse ici jsp où
+    public async Task SavePlayAsync(CreatePlayerDTO dto, GameType gameType)
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var player = await GetPlayerByName(dto.Name);
+
+        if (player == null)
+        {
+            await CreatePlayerAsync(dto);
+            player = await GetPlayerByName(dto.Name);
+        }
+
+        bool alreadyPlayed = await HasPlayerPlayedToday(dto.Name, gameType);
+
+        
+        if (alreadyPlayed)
+        {
+            logger.LogWarning("[TRICHEUR] {PlayerName} a déjà joué en mode {GameType} aujourd'hui",
+                dto.Name, gameType);
+            return;
+        }
+
+        var dailyPlay = new DailyPlay
+        {
+            PlayerId = player.PlayerId,
+            GameType = gameType,
+            Score = CalculateScore(dto.Tries),
+            Tries = dto.Tries,
+            PlayedDate = today
+        };
+
+        await db.DailyPlays.AddAsync(dailyPlay);
+        await db.SaveChangesAsync();
+        
+        await UpdatePlayerScore(dto.Name, dto.Tries);
+
+        logger.Success($"{dto.Name} a joué en mode {gameType} avec {dto.Tries} essais → {dailyPlay.Score} pts");
+    }
 
     public async Task UpdatePlayerScore(string playersName, int tries)
     { 
         var player = await GetPlayerByName(playersName);
         
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-
-        if (player.ScoreDate == today)
-        {
-            logger.LogWarning("[TRICHEUR] Le joueur {PlayerName} a déjà joué aujourd'hui",
-                playersName
-            );
-
-            return;
-        }
         
         player.Score += CalculateScore(tries);
         player.Tries += tries;
-        player.ScoreDate = DateOnly.FromDateTime(DateTime.UtcNow);
         await db.SaveChangesAsync();
-        
-        logger.Success($"Joueur déjà existant {playersName} a joué aujourd'hui et a fait {player.Score} points");
-        
     }
     
 }

@@ -1,12 +1,14 @@
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using QuiSNCF.DTO;
 using QuiSNCF.Models;
 using QuiSNCF.Repository;
 
 namespace QuiSNCF.API.Controllers;
 
+[EnableRateLimiting("fixed")]
 [Route("api/[controller]")]
 [ApiController]
 public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository> logger) : ControllerBase
@@ -27,37 +29,43 @@ public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository>
             return BadRequest("Nombre d'essais invalide");
         }
             
-
-        if (!await repo.DoesPlayerExist(player.Name))
-            await repo.CreatePlayerAsync(player);
-        else
-            await repo.UpdatePlayerScore(player.Name, player.Tries);
+        await repo.SavePlayAsync(player, player.GameType);
 
         return Ok();
     }
 
+    /*
     [HttpGet("getPlayer")]
     public async Task<List<Player>> GetAll()
     {
         return await repo.GetPlayers();
     }
+    
+    
 
     [HttpGet("getTodayTries")]
     public async Task<int> GetTodayTries()
     {
         return await repo.AllTriesToday();
     }
+    */
 
-    [HttpGet("getTodayBillboard")]
-    public async Task<List<Player>> GetTodayBillboard()
+    [HttpGet("getTodayBillboard/{gameType}")]
+    public async Task<List<PlayerScoreDTO>> GetTodayBillboard(GameType gameType)
     {
-        return await repo.GetTodaysBillboard();
+        return await repo.GetBillboardByGame(gameType);
     }
 
     [HttpGet("getBillboard")]
     public async Task<List<Player>> GetBillboard()
     {
         return await repo.GetBillboard();
+    }
+
+    [HttpGet("getByName/{name}/{gameType}")]
+    public async Task<List<PlayerScoreDTO>> GetBillboardByName(string name, GameType gameType)
+    {
+        return await repo.GetScoreByGameAndPlayer(name, gameType);
     }
 
 

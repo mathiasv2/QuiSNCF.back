@@ -4,4 +4,6 @@ public class CreatePlayerDTO
 {
     public string Name { get; set; }
     public int Tries { get; set; }
+    public GameType GameType { get; set; }
+
 }
