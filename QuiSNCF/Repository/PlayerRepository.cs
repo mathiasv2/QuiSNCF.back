@@ -88,7 +88,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
 
     private int CalculateScore(int multiplier)
     {
-        int score = 5000 - 323 * multiplier - 1;
+        int score = 5000 - 323 * (multiplier - 1);
         return Math.Max(500, score);
     }
 
