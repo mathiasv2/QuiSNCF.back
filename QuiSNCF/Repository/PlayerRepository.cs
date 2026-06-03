@@ -37,9 +37,9 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
             .Select(g => new PlayerScoreDTO
             {
                 Name = g.Key,
-                TotalScore = g.Sum(dp => dp.Score),
+                Score = g.Sum(dp => dp.Score),
             })
-            .OrderByDescending(p => p.TotalScore)
+            .OrderByDescending(p => p.Score)
             .ToListAsync();
     }
 
@@ -54,7 +54,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
             .Select(dp => new PlayerScoreDTO
             {
                 Name = dp.Player.Name,
-                TotalScore = dp.Score,
+                Score = dp.Score,
             })
             .ToListAsync();
     }
