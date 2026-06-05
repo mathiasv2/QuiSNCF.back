@@ -50,9 +50,10 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         return await db.DailyPlays
             .Include(dp => dp.Player)
             .Where(dp => dp.Player.Name == playerName && dp.GameType == gameType)
-            .OrderByDescending(dp => dp.Score)
+            .OrderBy(dp => dp.PlayedDate)
             .Select(dp => new GetPlayerScoreDTO()
             {
+                Tries = dp.Score,
                 Name = dp.Player.Name,
                 Score = dp.Score,
                 PlayedDate = dp.PlayedDate
