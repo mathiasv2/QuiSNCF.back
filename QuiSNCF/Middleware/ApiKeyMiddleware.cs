@@ -12,7 +12,7 @@ public class ApiKeyMiddleware(RequestDelegate next, IConfiguration config)
         {
             "/api/station/createstation",
             "/api/word/createword",
-            "/api/word/updateStation",
+            "/api/station/updateStation",
             "/api/word/updateword",
             "/api/station/all",
             "/api/word/all",
