@@ -43,14 +43,13 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
             .ToListAsync();
     }
 
-    //TODO: ça marche mais faut que je fasse un nouveau dto pour renvoyer la date avec mais j'ai la flemmme
-    // + faire la vérification avec un tolower() mais pareil la flemme
+
     public async Task<List<GetPlayerScoreDTO>> GetScoreByGameAndPlayer(string playerName, GameType gameType)
     {
         return await db.DailyPlays
             .Include(dp => dp.Player)
             .Where(dp => dp.Player.Name == playerName && dp.GameType == gameType)
-            .OrderByDescending(dp => dp.PlayedDate)
+            .OrderBy(dp => dp.PlayedDate)
             .Select(dp => new GetPlayerScoreDTO()
             {
                 Tries = dp.Tries,
