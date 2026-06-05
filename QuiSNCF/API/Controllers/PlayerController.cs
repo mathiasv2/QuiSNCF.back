@@ -63,7 +63,7 @@ public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository>
     }
 
     [HttpGet("getByName/{name}/{gameType}")]
-    public async Task<List<PlayerScoreDTO>> GetBillboardByName(string name, GameType gameType)
+    public async Task<List<GetPlayerScoreDTO>> GetBillboardByName(string name, GameType gameType)
     {
         return await repo.GetScoreByGameAndPlayer(name, gameType);
     }
