@@ -35,6 +35,11 @@ public class StationRepository(GameDbContext db, ILogger<StationRepository> logg
 
         return availableStations[index];
     }
+
+    public async Task<List<Station>> GetStations()
+    {
+        return await db.Stations.ToListAsync();
+    }
     
     public async Task<Station?> GetOrPickTodayStation()
     {

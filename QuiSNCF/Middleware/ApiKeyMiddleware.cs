@@ -12,7 +12,10 @@ public class ApiKeyMiddleware(RequestDelegate next, IConfiguration config)
         {
             "/api/station/createstation",
             "/api/word/createword",
-            "updateStation"
+            "/api/word/updateStation",
+            "/api/word/updateword",
+            "/api/station/all",
+            "/api/word/all",
         };
 
         if (protectedRoutes.Any(r => path?.StartsWith(r.ToLower()) == true))

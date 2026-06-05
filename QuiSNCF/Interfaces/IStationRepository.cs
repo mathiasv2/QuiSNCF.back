@@ -11,5 +11,6 @@ public interface IStationRepository
     void DeleteStation(int id);
     Task<bool> IsInputRight(string input);
     public void UpdateStation(UpdateStationDTO updateStation, int id);
+    Task<List<Station>> GetStations();
 
 }

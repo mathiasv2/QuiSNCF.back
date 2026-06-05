@@ -38,4 +38,11 @@ public class WordController(IWordRepository repo): ControllerBase
             message = "Word updated successfully"
         });
     }
+    
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAll()
+    {
+        var words = await repo.GetWords();
+        return Ok(words);
+    }
 }

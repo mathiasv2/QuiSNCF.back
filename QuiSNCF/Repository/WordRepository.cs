@@ -7,6 +7,11 @@ namespace QuiSNCF.Repository;
 
 public class WordRepository(GameDbContext db, ILogger<WordRepository> logger) : IWordRepository
 {
+    public async Task<List<Word>> GetWords()
+    {
+        return await db.Words.ToListAsync();
+    }
+    
     public async Task<Word?> GetOrPickTodayWord()
     {
         var today = DateOnly.FromDateTime(DateTime.Today);

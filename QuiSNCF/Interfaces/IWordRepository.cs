@@ -9,4 +9,5 @@ public interface IWordRepository
     Task<bool> IsInputRight(string input);
     Task CreateWord(CreateWordDTO word);
     Task UpdateWord(UpdateWordDTO wordDto, int wordId);
+    Task<List<Word>> GetWords();
 }

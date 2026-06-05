@@ -36,6 +36,13 @@ public class StationController(IStationRepository repo) : ControllerBase
         return Ok("Station updated");   
     }
 
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAll()
+    {
+        var stations = await repo.GetStations();
+        return Ok(stations);
+    }
+
     /*
     
 
