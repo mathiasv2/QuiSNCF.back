@@ -8,21 +8,21 @@ public static class LogsHelper
 
     public static void Api(this ILogger logger, string message)
     {
-        logger.LogInformation($"{Cyan}[API]{Reset} {message}");
+        logger.LogInformation($"{Cyan}[API - {DateTime.Now}]{Reset} {message}");
     }
 
     public static void Success(this ILogger logger, string message)
     {
-        logger.LogInformation($"{Green}[INFO - {DateTime.Today}]{Reset} {message}");
+        logger.LogInformation($"{Green}[INFO - {DateTime.Now}]{Reset} {message}");
     }
 
     public static void WarningColored(this ILogger logger, string message)
     {
-        logger.LogWarning($"{Yellow}[WARNING]{Reset} {message}");
+        logger.LogWarning($"{Yellow}[WARNING - {DateTime.Now}]{Reset} {message}");
     }
 
     public static void ErrorColored(this ILogger logger, string message)
     {
-        logger.LogError($"{Red}[ERROR]{Reset} {message}");
+        logger.LogError($"{Red}[ERROR - {DateTime.Now}]{Reset} {message}");
     }
 }
