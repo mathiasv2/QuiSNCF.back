@@ -29,6 +29,34 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         );
     }
     
+    
+
+    private async Task<bool> SpecialWeekMultiplier(string playerName, GameType gameType)
+    {
+        DateOnly firstDaySpecialWeek = new(2026, 1, 1);
+
+        var playedBeforeSpecialWeek = await db.DailyPlays.AnyAsync(dp =>
+            dp.GameType == gameType &&
+            dp.Player.Name == playerName &&
+            dp.PlayedDate < firstDaySpecialWeek);
+
+        return playedBeforeSpecialWeek;
+    }
+
+    private async Task<List<GetPlayerPlaysDateDTO>> GetPlayerPlaysDatesByGameType(string playerName, GameType gameType)
+    {
+        return  await db.DailyPlays
+            .Where(dp => dp.GameType == gameType && dp.Player.Name.Trim().ToLower() == playerName.Trim().ToLower())
+            .Select(dp => dp.PlayedDate)
+            .Distinct()
+            .Select(d => new GetPlayerPlaysDateDTO
+            {
+                PlayedDate = d
+            })
+            .OrderByDescending(x =>  x.PlayedDate)
+            .ToListAsync();
+    }
+    
     public async Task<List<PlayerScoreDTO>> GetBillboardByGame(GameType gameType)
     {
         return await db.DailyPlays
@@ -134,7 +162,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         {
             PlayerId = player.PlayerId,
             GameType = gameType,
-            Score = CalculateScore(dto.Tries),
+            Score = await SpecialWeekMultiplier(dto.Name, gameType) ? CalculateScore(dto.Tries) * (int)1.5 : CalculateScore(dto.Tries),
             Tries = dto.Tries,
             PlayedDate = today
         };
