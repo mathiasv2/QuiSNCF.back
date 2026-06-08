@@ -93,7 +93,8 @@ public class WordRepository(GameDbContext db, ILogger<WordRepository> logger) : 
 
     public async Task<bool> LookUpForWord(string word)
     {
-        var lines = await File.ReadAllLinesAsync("./mots.txt");
+        var path = Path.Combine(AppContext.BaseDirectory, "mots.txt");
+        var lines = await File.ReadAllLinesAsync(path);
         return lines.Any(l => l.Trim().Equals(word.Trim(), StringComparison.OrdinalIgnoreCase));
     }
     
