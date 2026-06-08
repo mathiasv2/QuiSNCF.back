@@ -31,16 +31,14 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
     
     
 
-    private async Task<bool> SpecialWeekMultiplier(string playerName, GameType gameType)
+    private async Task<bool> HasPlayedBeforeSpecialWeek(string playerName, GameType gameType)
     {
         DateOnly firstDaySpecialWeek = new(2026, 6, 8);
 
-        var playedBeforeSpecialWeek = await db.DailyPlays.AnyAsync(dp =>
+        return await db.DailyPlays.AnyAsync(dp =>
             dp.GameType == gameType &&
             dp.Player.Name == playerName &&
             dp.PlayedDate < firstDaySpecialWeek);
-
-        return playedBeforeSpecialWeek;
     }
 
     private async Task<float> GetStreakMultiplier(string playerName, GameType gameType)
@@ -182,12 +180,19 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
                 dto.Name, gameType);
             return;
         }
+        
+        var baseScore = CalculateScore(dto.Tries);
+        //var streakMultiplier = await GetStreakMultiplier(dto.Name, gameType);
+        var isNewPlayer = !await HasPlayedBeforeSpecialWeek(dto.Name, gameType);
+
+        var finalScore = (int)(baseScore * (isNewPlayer ?(float)1.5 : 1));
+
 
         var dailyPlay = new DailyPlay
         {
             PlayerId = player.PlayerId,
             GameType = gameType,
-            Score = await SpecialWeekMultiplier(dto.Name, gameType) ?  CalculateScore(dto.Tries) : CalculateScore(dto.Tries) * (int)1.5,
+            Score = finalScore,
             Tries = dto.Tries,
             PlayedDate = today
         };
