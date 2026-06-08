@@ -64,13 +64,31 @@ public class WordRepository(GameDbContext db, ILogger<WordRepository> logger) : 
         await db.SaveChangesAsync();
     }
 
-    public async Task UpdateWord(UpdateWordDTO wordDto, int wordId)
+    private async Task<Word?> GetWordByID(int wordId)
     {
         Word? word =  await db.Words.FindAsync(wordId);
-        if (word == null)
-            throw new KeyNotFoundException($"Word {wordId} not found");
+        return word ?? throw new KeyNotFoundException($"Word {wordId} not found");
+    }
+
+    public async Task UpdateWordDefinition(UpdateWordDefinitionDTO wordDto, int wordId)
+    {
+        var word = await GetWordByID(wordId);
         word.Definition = wordDto.Definition;
         await db.SaveChangesAsync();
+    }
+
+    public async Task UpdateWord(UpdateWordDTO wordDto, int wordId)
+    {
+        var word = await GetWordByID(wordId);
+        word.WordName = wordDto.Word;
+        await db.SaveChangesAsync();
+    }
+    
+    public async Task DeleteWord(int wordId)
+    {
+        var word = await GetWordByID(wordId);
+
+        db.Words.Remove(word);
     }
     
     

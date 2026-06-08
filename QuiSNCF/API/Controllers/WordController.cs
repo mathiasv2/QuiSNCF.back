@@ -29,7 +29,17 @@ public class WordController(IWordRepository repo): ControllerBase
         });
     }
 
-    [HttpPut("updateWord/{id}")]
+    [HttpPut("updateworddefinition/{id}")]
+    public async Task<IActionResult> UpdateWordDefinition(UpdateWordDefinitionDTO wordDto, int id)
+    {
+        await repo.UpdateWordDefinition(wordDto, id);
+        return Ok(new
+        {
+            message = "Word definition updated successfully"
+        });
+    }
+    
+    [HttpPut("updateword/{id}")]
     public async Task<IActionResult> UpdateWord(UpdateWordDTO wordDto, int id)
     {
         await repo.UpdateWord(wordDto, id);
