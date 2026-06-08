@@ -7,7 +7,7 @@ public interface IPlayerRepository
 {
     Task<List<Player>> GetBillboard();
     Task<List<PlayerScoreDTO>> GetBillboardByGame(GameType gameType);
-    Task SavePlayAsync(CreatePlayerDTO dto, GameType gameType);
+    Task<int> SavePlayAsync(CreatePlayerDTO dto, GameType gameType);
     Task<List<GetPlayerScoreDTO>> GetScoreByGameAndPlayer(string playerName, GameType gameType);
 
 }
