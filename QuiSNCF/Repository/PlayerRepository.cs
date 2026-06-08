@@ -43,18 +43,43 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         return playedBeforeSpecialWeek;
     }
 
-    private async Task<List<GetPlayerPlaysDateDTO>> GetPlayerPlaysDatesByGameType(string playerName, GameType gameType)
+    private async Task<float> GetStreakMultiplier(string playerName, GameType gameType)
     {
-        return  await db.DailyPlays
-            .Where(dp => dp.GameType == gameType && dp.Player.Name.Trim().ToLower() == playerName.Trim().ToLower())
+        var today = DateOnly.FromDateTime(DateTime.Today);
+
+        var recentDates = await db.DailyPlays
+            .Where(dp => dp.GameType == gameType 
+                         && dp.Player.Name.Trim().ToLower() == playerName.Trim().ToLower())
             .Select(dp => dp.PlayedDate)
             .Distinct()
-            .Select(d => new GetPlayerPlaysDateDTO
-            {
-                PlayedDate = d
-            })
-            .OrderByDescending(x =>  x.PlayedDate)
+            .OrderByDescending(d => d)
+            .Take(5)
             .ToListAsync();
+
+        if (!recentDates.Contains(today))
+            return 1;
+
+        int streak = 0;
+        var expected = today;
+
+        foreach (var date in recentDates)
+        {
+            if (date == expected)
+            {
+                streak++;
+                expected = expected.AddDays(-1);
+            }
+            else break;
+        }
+
+        return streak switch
+        {
+            >= 5 => (float)1.5,
+            4    => (float)1.4,
+            3    => (float)1.3,
+            2    => (float)1.2,
+            _    => 1
+        };
     }
     
     public async Task<List<PlayerScoreDTO>> GetBillboardByGame(GameType gameType)
@@ -166,22 +191,24 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
             Tries = dto.Tries,
             PlayedDate = today
         };
+        
+        
 
         await db.DailyPlays.AddAsync(dailyPlay);
         await db.SaveChangesAsync();
         
-        await UpdatePlayerScore(dto.Name, dto.Tries);
+        await UpdatePlayerScore(dto.Name, dailyPlay.Score, dailyPlay.Tries);
 
         logger.Success($"{dto.Name} a joué en mode {gameType} avec {dto.Tries} essais → {dailyPlay.Score} pts");
     }
 
-    public async Task UpdatePlayerScore(string playersName, int tries)
+    private async Task UpdatePlayerScore(string playersName, int score, int tries)
     { 
         var player = await GetPlayerByName(playersName);
         
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        
-        player.Score += CalculateScore(tries);
+
+        player.Score += score;
         player.Tries += tries;
         await db.SaveChangesAsync();
     }
