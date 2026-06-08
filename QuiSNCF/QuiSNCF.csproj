@@ -32,7 +32,7 @@
         <Content Include="Seeds\word.sql">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Include="Seeds\mots.txt">
+        <Content Include="mots.txt">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
