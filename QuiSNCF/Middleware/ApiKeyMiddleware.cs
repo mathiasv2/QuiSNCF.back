@@ -16,6 +16,7 @@ public class ApiKeyMiddleware(RequestDelegate next, IConfiguration config)
             "/api/word/updateword",
             "/api/station/all",
             "/api/word/all",
+            "/api/word/updateworddefinition"
         };
 
         if (protectedRoutes.Any(r => path?.StartsWith(r.ToLower()) == true))
