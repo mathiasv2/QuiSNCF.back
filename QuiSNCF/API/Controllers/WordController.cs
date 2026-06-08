@@ -55,4 +55,10 @@ public class WordController(IWordRepository repo): ControllerBase
         var words = await repo.GetWords();
         return Ok(words);
     }
+
+    [HttpGet("{word}")]
+    public async Task<bool> WordExists(string word)
+    {
+        return await repo.LookUpForWord(word);
+    }
 }

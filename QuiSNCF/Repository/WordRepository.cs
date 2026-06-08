@@ -90,6 +90,12 @@ public class WordRepository(GameDbContext db, ILogger<WordRepository> logger) : 
 
         db.Words.Remove(word);
     }
+
+    public async Task<bool> LookUpForWord(string word)
+    {
+        var lines = await File.ReadAllLinesAsync("./mots.txt");
+        return lines.Any(l => l.Trim().Equals(word.Trim(), StringComparison.OrdinalIgnoreCase));
+    }
     
     
 }
