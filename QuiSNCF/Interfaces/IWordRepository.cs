@@ -11,4 +11,5 @@ public interface IWordRepository
     Task UpdateWordDefinition(UpdateWordDefinitionDTO wordDto, int wordId);
     Task UpdateWord(UpdateWordDTO wordDto, int wordId);
     Task<List<Word>> GetWords();
+    Task<bool> LookUpForWord(string word);
 }
