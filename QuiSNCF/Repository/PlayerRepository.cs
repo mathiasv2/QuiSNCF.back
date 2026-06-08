@@ -187,7 +187,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         {
             PlayerId = player.PlayerId,
             GameType = gameType,
-            Score = await SpecialWeekMultiplier(dto.Name, gameType) ? CalculateScore(dto.Tries) * (int)1.5 : CalculateScore(dto.Tries),
+            Score = await SpecialWeekMultiplier(dto.Name, gameType) ?  CalculateScore(dto.Tries) : CalculateScore(dto.Tries) * (int)1.5,
             Tries = dto.Tries,
             PlayedDate = today
         };
