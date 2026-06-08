@@ -38,8 +38,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         var playedBeforeSpecialWeek = await db.DailyPlays.AnyAsync(dp =>
             dp.GameType == gameType &&
             dp.Player.Name == playerName &&
-            dp.PlayedDate <= firstDaySpecialWeek &&
-            dp.PlayedDate >= firstDaySpecialWeek.AddDays(7));
+            dp.PlayedDate < firstDaySpecialWeek);
 
         return playedBeforeSpecialWeek;
     }
