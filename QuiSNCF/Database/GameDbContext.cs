@@ -17,8 +17,11 @@ public class GameDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
         modelBuilder.Entity<Player>()
             .HasKey(x => x.PlayerId);
-
-
+        
+        modelBuilder.Entity<Player>()
+            .HasIndex(p => p.Name)
+            .HasDatabaseName("IX_Players_Name");
+        
         modelBuilder.Entity<Station>()
             .HasKey(x => x.StationId);
 
@@ -29,6 +32,10 @@ public class GameDbContext : Microsoft.EntityFrameworkCore.DbContext
             .HasOne(dp => dp.Player)
             .WithMany(p => p.DailyPlays)
             .HasForeignKey(dp => dp.PlayerId);
+        
+        modelBuilder.Entity<DailyPlay>()
+            .HasIndex(dp => new { dp.PlayerId, dp.GameType, dp.PlayedDate })
+            .HasDatabaseName("IX_DailyPlays_PlayerId_GameType_PlayedDate");
         
         base.OnModelCreating(modelBuilder);
     }
