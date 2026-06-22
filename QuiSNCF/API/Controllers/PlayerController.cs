@@ -29,9 +29,9 @@ public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository>
             return BadRequest("Nombre d'essais invalide");
         }
             
-        await repo.SavePlayAsync(player, player.GameType);
+        int finalScore = await repo.SavePlayAsync(player, player.GameType);
 
-        return Ok();
+        return Ok(finalScore);
     }
 
     /*

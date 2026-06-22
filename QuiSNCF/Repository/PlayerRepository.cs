@@ -29,6 +29,55 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         );
     }
     
+    
+
+    private async Task<bool> HasPlayedBeforeSpecialWeek(string playerName, GameType gameType)
+    {
+        DateOnly firstDaySpecialWeek = new(2026, 6, 22);
+
+        return await db.DailyPlays.AnyAsync(dp =>
+            dp.GameType == gameType &&
+            dp.Player.Name == playerName &&
+            dp.PlayedDate < firstDaySpecialWeek);
+    }
+
+    private async Task<float> GetStreakMultiplier(string playerName, GameType gameType)
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var yesterday = today.AddDays(-1);
+
+        var recentDates = await db.DailyPlays
+            .Where(dp => dp.GameType == gameType 
+                         && dp.Player.Name.Trim().ToLower() == playerName.Trim().ToLower())
+            .Select(dp => dp.PlayedDate)
+            .Distinct()
+            .OrderByDescending(d => d)
+            .Take(5)
+            .ToListAsync();
+
+        int streak = 1; 
+        var expected = yesterday;
+
+        foreach (var date in recentDates)
+        {
+            if (date == expected)
+            {
+                streak++;
+                expected = expected.AddDays(-1);
+            }
+            else break;
+        }
+
+        return streak switch
+        {
+            >= 5 => 1.5f,
+            4    => 1.4f,
+            3    => 1.3f,
+            2    => 1.2f,
+            _    => 1f
+        };
+    }
+    
     public async Task<List<PlayerScoreDTO>> GetBillboardByGame(GameType gameType)
     {
         return await db.DailyPlays
@@ -109,7 +158,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         logger.Success($"Joueur {player.Name} a joué pour la première fois avec {player.Tries} essais");
     }
     
-    public async Task SavePlayAsync(CreatePlayerDTO dto, GameType gameType)
+    public async Task<int> SavePlayAsync(CreatePlayerDTO dto, GameType gameType)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var player = await GetPlayerByName(dto.Name);
@@ -127,33 +176,43 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         {
             logger.LogWarning("[TRICHEUR] {PlayerName} a déjà joué en mode {GameType} aujourd'hui",
                 dto.Name, gameType);
-            return;
+            throw new Exception("Joueur a essayé de tricher");
         }
+        
+        var baseScore = CalculateScore(dto.Tries);
+        var streakMultiplier = await GetStreakMultiplier(dto.Name, gameType);
+        var isNewPlayer = !await HasPlayedBeforeSpecialWeek(dto.Name, gameType);
+        var finalScore = (int)(baseScore * (isNewPlayer ? 1.5 : 1.0) * streakMultiplier);
+
 
         var dailyPlay = new DailyPlay
         {
             PlayerId = player.PlayerId,
             GameType = gameType,
-            Score = CalculateScore(dto.Tries),
+            Score = finalScore,
             Tries = dto.Tries,
             PlayedDate = today
         };
+        
+        
 
         await db.DailyPlays.AddAsync(dailyPlay);
         await db.SaveChangesAsync();
         
-        await UpdatePlayerScore(dto.Name, dto.Tries);
+        await UpdatePlayerScore(dto.Name, dailyPlay.Score, dailyPlay.Tries);
 
         logger.Success($"{dto.Name} a joué en mode {gameType} avec {dto.Tries} essais → {dailyPlay.Score} pts");
+        
+        return finalScore;
     }
 
-    public async Task UpdatePlayerScore(string playersName, int tries)
+    private async Task UpdatePlayerScore(string playersName, int score, int tries)
     { 
         var player = await GetPlayerByName(playersName);
         
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        
-        player.Score += CalculateScore(tries);
+
+        player.Score += score;
         player.Tries += tries;
         await db.SaveChangesAsync();
     }
