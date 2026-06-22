@@ -43,7 +43,8 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
 
     private async Task<float> GetStreakMultiplier(string playerName, GameType gameType)
     {
-        var today = DateOnly.FromDateTime(DateTime.Today);
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var yesterday = today.AddDays(-1);
 
         var recentDates = await db.DailyPlays
             .Where(dp => dp.GameType == gameType 
@@ -54,11 +55,8 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
             .Take(5)
             .ToListAsync();
 
-        if (!recentDates.Contains(today))
-            return 1;
-
-        int streak = 0;
-        var expected = today;
+        int streak = 1; 
+        var expected = yesterday;
 
         foreach (var date in recentDates)
         {
@@ -72,11 +70,11 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
 
         return streak switch
         {
-            >= 5 => (float)1.5,
-            4    => (float)1.4,
-            3    => (float)1.3,
-            2    => (float)1.2,
-            _    => 1
+            >= 5 => 1.5f,
+            4    => 1.4f,
+            3    => 1.3f,
+            2    => 1.2f,
+            _    => 1f
         };
     }
     
