@@ -33,7 +33,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
 
     private async Task<bool> HasPlayedBeforeSpecialWeek(string playerName, GameType gameType)
     {
-        DateOnly firstDaySpecialWeek = new(2026, 6, 8);
+        DateOnly firstDaySpecialWeek = new(2026, 6, 22);
 
         return await db.DailyPlays.AnyAsync(dp =>
             dp.GameType == gameType &&
