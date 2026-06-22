@@ -182,9 +182,9 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         }
         
         var baseScore = CalculateScore(dto.Tries);
-        //var streakMultiplier = await GetStreakMultiplier(dto.Name, gameType);
+        var streakMultiplier = await GetStreakMultiplier(dto.Name, gameType);
         var isNewPlayer = !await HasPlayedBeforeSpecialWeek(dto.Name, gameType);
-        var finalScore = (int)(baseScore * (isNewPlayer ? 1.5 : 1.0));
+        var finalScore = (int)(baseScore * (isNewPlayer ? 1.5 : 1.0) * streakMultiplier);
 
 
         var dailyPlay = new DailyPlay
