@@ -1,0 +1,29 @@
+name: Build, push and deploy backend
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build, push and deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PI_HOST }}
+          username: ${{ secrets.PI_USER }}
+          key: ${{ secrets.PI_SSH_KEY }}
+          port: ${{ secrets.PI_PORT }}
+          script: |
+            cd ~/sncfdle/modules/back/QuiSNCF
+            git pull --rebase origin main
+
+            docker build -t vonrothbart/sncfdle-backend:latest .
+            docker push vonrothbart/sncfdle-backend:latest
+
+            kubectl rollout restart deployment game-service -n sncfdle
+            kubectl rollout status deployment game-service -n sncfdle --timeout=120s
+
+            docker image prune -f
