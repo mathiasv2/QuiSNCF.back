@@ -67,6 +67,10 @@ public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository>
     {
         return await repo.GetScoreByGameAndPlayer(name, gameType);
     }
-
+    [HttpGet("count")]
+    public async Task<int> GetPlayersCount([FromQuery] GameType? gameType)
+    {
+        return await repo.GetPlayersCount(gameType);
+    }
 
 }

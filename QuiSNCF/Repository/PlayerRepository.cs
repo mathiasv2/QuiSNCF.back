@@ -216,5 +216,11 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         player.Tries += tries;
         await db.SaveChangesAsync();
     }
+
+    public async Task<int> GetPlayersCount(GameType? gametype)
+    {
+        return gametype == null 
+            ? db.DailyPlays.Where(x => x.GameType == gametype).GroupBy(x => x.PlayerId).Count() 
+            : db.Players.Count();    }
     
 }
