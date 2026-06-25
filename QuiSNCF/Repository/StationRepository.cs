@@ -16,7 +16,7 @@ public class StationRepository(GameDbContext db, ILogger<StationRepository> logg
         logger.LogInformation($"Sélection de la gare du jour à {TimeOnly.FromDateTime(DateTime.Now)}");
 
         var availableStations = db.Stations
-            .Where(s => s.LastTimePlayed < today.AddDays(-10))
+            .Where(s => s.LastTimePlayed < today.AddDays(-30))
             .ToList();
 
         if (!availableStations.Any())
