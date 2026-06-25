@@ -220,7 +220,8 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
     public async Task<int> GetPlayersCount(GameType? gametype)
     {
         return gametype == null 
-            ? db.DailyPlays.Where(x => x.GameType == gametype).GroupBy(x => x.PlayerId).Count() 
-            : db.Players.Count();    }
+            ? db.DailyPlays.GroupBy(x => x.PlayerId).Count()  
+            : db.DailyPlays.Where(x => x.GameType == gametype.Value).GroupBy(x => x.PlayerId).Count();
+    }
     
 }
