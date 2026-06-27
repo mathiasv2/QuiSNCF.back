@@ -28,7 +28,7 @@ public class WordRepository(GameDbContext db, ILogger<WordRepository> logger) : 
         var today = DateOnly.FromDateTime(DateTime.Today);
 
         var available = await db.Words
-            .Where(w => w.LastTimePlayed < today.AddDays(-30))
+            .Where(w => w.LastTimePlayed < today.AddDays(-40))
             .ToListAsync();
 
         if (!available.Any())
