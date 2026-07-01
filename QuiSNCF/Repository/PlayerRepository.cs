@@ -92,6 +92,17 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
             .ToListAsync();
     }
 
+    public PlayerScoreDTO GetBestPlayerBySeason(int season)
+    {
+        return db.Players.OrderByDescending(p => p.Score)
+            .Select(x => new PlayerScoreDTO()
+            {
+                Name = x.Name,
+                Score = x.Score,
+            })
+            .First();
+    }
+
 
     public async Task<List<GetPlayerScoreDTO>> GetScoreByGameAndPlayer(string playerName, GameType gameType)
     {

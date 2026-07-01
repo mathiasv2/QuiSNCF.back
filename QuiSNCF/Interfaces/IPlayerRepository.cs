@@ -10,4 +10,5 @@ public interface IPlayerRepository
     Task<int> SavePlayAsync(CreatePlayerDTO dto, GameType gameType);
     Task<List<GetPlayerScoreDTO>> GetScoreByGameAndPlayer(string playerName, GameType gameType);
     Task<int> GetPlayersCount(GameType? gametype);
+    PlayerScoreDTO GetBestPlayerBySeason(int season);
 }

@@ -73,4 +73,10 @@ public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository>
         return await repo.GetPlayersCount(gameType);
     }
 
+    [HttpGet("best/{season}")]
+    public IActionResult GetBestPlayerBySeason(int season)
+    {
+        return Ok(repo.GetBestPlayerBySeason(season));
+    }
+
 }
