@@ -5,7 +5,7 @@ using QuiSNCF.Models;
 
 namespace QuiSNCF.Repository;
 
-public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger) : IPlayerRepository
+public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger, IConfiguration config) : IPlayerRepository
 {
     public async Task<List<Player>> GetPlayers()
     {
@@ -150,7 +150,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
             Tries = 0,
             Name = player.Name,
             Score = 0,
-            Season = 
+            Season = 0
         };
         
         await db.Players.AddAsync(newPlayer);
@@ -161,6 +161,8 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
     
     public async Task<int> SavePlayAsync(CreatePlayerDTO dto, GameType gameType)
     {
+        var season = config.GetValue<int>("Season");
+        
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var player = await GetPlayerByName(dto.Name);
 
@@ -192,7 +194,8 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
             GameType = gameType,
             Score = finalScore,
             Tries = dto.Tries,
-            PlayedDate = today
+            PlayedDate = today,
+            Season = season
         };
         
         
@@ -209,12 +212,15 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
 
     private async Task UpdatePlayerScore(string playersName, int score, int tries)
     { 
+        var season = config.GetValue<int>("Season");
+
         var player = await GetPlayerByName(playersName);
         
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
         player.Score += score;
         player.Tries += tries;
+        player.Season = season;
         await db.SaveChangesAsync();
     }
 
