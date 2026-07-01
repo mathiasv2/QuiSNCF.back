@@ -78,10 +78,10 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         };
     }
     
-    public async Task<List<PlayerScoreDTO>> GetBillboardByGame(GameType gameType)
+    public async Task<List<PlayerScoreDTO>> GetBillboardByGame(GameType gameType, int season)
     {
         return await db.DailyPlays
-            .Where(dp => dp.GameType == gameType)
+            .Where(dp => dp.GameType == gameType && dp.Season == season)
             .GroupBy(dp => dp.Player.Name)
             .Select(g => new PlayerScoreDTO
             {
@@ -119,9 +119,9 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
     }
     
 
-    public async Task<List<Player>> GetBillboard()
+    public async Task<List<Player>> GetBillboard(int season)
     {
-        var players = await db.Players.OrderByDescending(x => x.Score).ToListAsync();
+        var players = await db.Players.Where(x => x.Season == season).OrderByDescending(x => x.Score).ToListAsync();
         return players;
     }
 
@@ -150,6 +150,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
             Tries = 0,
             Name = player.Name,
             Score = 0,
+            Season = 
         };
         
         await db.Players.AddAsync(newPlayer);
