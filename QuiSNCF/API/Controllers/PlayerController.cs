@@ -50,16 +50,16 @@ public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository>
     }
     */
 
-    [HttpGet("getTodayBillboard/{gameType}")]
-    public async Task<List<PlayerScoreDTO>> GetTodayBillboard(GameType gameType)
+    [HttpGet("getTodayBillboard/{gameType}/{season}")]
+    public async Task<List<PlayerScoreDTO>> GetTodayBillboard(GameType gameType, int season)
     {
-        return await repo.GetBillboardByGame(gameType);
+        return await repo.GetBillboardByGame(gameType, season);
     }
 
-    [HttpGet("getBillboard")]
-    public async Task<List<Player>> GetBillboard()
+    [HttpGet("getBillboard/{season}")]
+    public async Task<List<Player>> GetBillboard(int season)
     {
-        return await repo.GetBillboard();
+        return await repo.GetBillboard(season);
     }
 
     [HttpGet("getByName/{name}/{gameType}")]
