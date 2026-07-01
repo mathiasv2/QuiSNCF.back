@@ -95,6 +95,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
     public PlayerScoreDTO GetBestPlayerBySeason(int season)
     {
         return db.Players.OrderByDescending(p => p.Score)
+            .Where(x =>  x.Season == season)
             .Select(x => new PlayerScoreDTO()
             {
                 Name = x.Name,
