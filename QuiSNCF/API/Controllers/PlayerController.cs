@@ -80,7 +80,7 @@ public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository>
     }
 
     [HttpGet("total/{name}")]
-    public async Task<int> GetTotalScoreByPlayerAndGameType(string name, [FromQuery] GameType? gameType)
+    public async Task<int> GetTotalScoreByPlayerAndGameType([FromQuery] GameType? gameType, string name)
     {
         return await repo.GetTotalScoreByPlayerAndGameType(name, gameType);
     }
