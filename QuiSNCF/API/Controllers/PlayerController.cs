@@ -79,8 +79,8 @@ public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository>
         return Ok(repo.GetBestPlayerBySeason(season));
     }
 
-    [HttpGet("total/{name}/{gameType?}")]
-    public async Task<int> GetTotalScoreByPlayerAndGameType(string name, GameType? gameType)
+    [HttpGet("total/{name}")]
+    public async Task<int> GetTotalScoreByPlayerAndGameType(string name, [FromQuery] GameType? gameType)
     {
         return await repo.GetTotalScoreByPlayerAndGameType(name, gameType);
     }
