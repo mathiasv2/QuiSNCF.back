@@ -50,7 +50,7 @@ public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository>
     }
     */
 
-    [HttpGet("getTodayBillboard/{gameType}/{season}")]
+    [HttpGet("getBillboardByGameType/{gameType}/{season}")]
     public async Task<List<PlayerScoreDTO>> GetTodayBillboard(GameType gameType, int season)
     {
         return await repo.GetBillboardByGame(gameType, season);
