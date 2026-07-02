@@ -78,7 +78,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         };
     }
 
-    public async Task<int> GetTotalScoreByPlayerAndGameType(string playerName, GameType? gameType)
+    public async Task<int> GetTotalScoreByPlayerAndGameType(string playerName, GameType gameType)
     {
         return await db.DailyPlays
             .Where(x => x.Player.Name.Trim().ToLower() == playerName.Trim().ToLower() && x.GameType == gameType)

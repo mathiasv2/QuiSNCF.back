@@ -11,5 +11,5 @@ public interface IPlayerRepository
     Task<List<GetPlayerScoreDTO>> GetScoreByGameAndPlayer(string playerName, GameType gameType);
     int GetPlayersCount(GameType? gametype);
     PlayerScoreDTO GetBestPlayerBySeason(int season);
-    Task<int> GetTotalScoreByPlayerAndGameType(string playerName, GameType? gameType);
+    Task<int> GetTotalScoreByPlayerAndGameType(string playerName, GameType gameType);
 }
