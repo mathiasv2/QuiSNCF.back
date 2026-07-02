@@ -77,6 +77,13 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
             _    => 1f
         };
     }
+
+    public async Task<int> GetTotalScoreByPlayerAndGameType(string playerName, GameType? gameType)
+    {
+        return await db.DailyPlays
+            .Where(x => x.Player.Name.Trim().ToLower() == playerName.Trim().ToLower() && x.GameType == gameType)
+            .SumAsync(x=> x.Score);
+    }
     
     public async Task<List<PlayerScoreDTO>> GetBillboardByGame(GameType gameType, int season)
     {
@@ -120,8 +127,6 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
             })
             .ToListAsync();
     }
-    
-   
     
     
     public async Task<bool> DoesPlayerExist(string name)
@@ -236,7 +241,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         await db.SaveChangesAsync();
     }
 
-    public async Task<int> GetPlayersCount(GameType? gametype)
+    public int GetPlayersCount(GameType? gametype)
     {
         return gametype == null 
             ? db.DailyPlays.GroupBy(x => x.PlayerId).Count()  
