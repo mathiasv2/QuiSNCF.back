@@ -50,16 +50,16 @@ public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository>
     }
     */
 
-    [HttpGet("getTodayBillboard/{gameType}")]
-    public async Task<List<PlayerScoreDTO>> GetTodayBillboard(GameType gameType)
+    [HttpGet("getBillboardByGameType/{gameType}/{season}")]
+    public async Task<List<PlayerScoreDTO>> GetTodayBillboard(GameType gameType, int season)
     {
-        return await repo.GetBillboardByGame(gameType);
+        return await repo.GetBillboardByGame(gameType, season);
     }
 
-    [HttpGet("getBillboard")]
-    public async Task<List<Player>> GetBillboard()
+    [HttpGet("getBillboard/{season}")]
+    public async Task<List<Player>> GetBillboard(int season)
     {
-        return await repo.GetBillboard();
+        return await repo.GetBillboard(season);
     }
 
     [HttpGet("getByName/{name}/{gameType}")]
@@ -70,7 +70,20 @@ public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository>
     [HttpGet("count")]
     public async Task<int> GetPlayersCount([FromQuery] GameType? gameType)
     {
-        return await repo.GetPlayersCount(gameType);
+        return repo.GetPlayersCount(gameType);
     }
+
+    [HttpGet("best/{season}")]
+    public IActionResult GetBestPlayerBySeason(int season)
+    {
+        return Ok(repo.GetBestPlayerBySeason(season));
+    }
+
+    [HttpGet("total/{name}/{gameType}")]
+    public async Task<int> GetTotalScoreByPlayerAndGameType(GameType gameType, string name)
+    {
+        return await repo.GetTotalScoreByPlayerAndGameType(name, gameType);
+    }
+    
 
 }

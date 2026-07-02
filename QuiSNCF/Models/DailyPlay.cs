@@ -9,6 +9,7 @@ public class DailyPlay
     public DateOnly PlayedDate { get; set; }
     public int Score { get; set; }
     public int Tries { get; set; }
+    public int Season { get; set; }
     
     public Player Player { get; set; }
 
