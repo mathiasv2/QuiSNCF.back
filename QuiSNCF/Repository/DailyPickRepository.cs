@@ -7,7 +7,7 @@ public class DailyPickRepository(GameDbContext db, ILogger<DailyPickRepository> 
 {
     private const int CooldownDays = 40;
 
-    public async Task<T?> GetOrPickToday<T>() where T : class, IPlayable
+    public async Task<T?> GetOrPickToday<T>(Action<T>? onNewPick = null) where T : class, IPlayable
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
 
@@ -17,10 +17,10 @@ public class DailyPickRepository(GameDbContext db, ILogger<DailyPickRepository> 
         if (todaysPick != null)
             return todaysPick;
 
-        return await PickRandom<T>(today);
+        return await PickRandom(today, onNewPick);
     }
 
-    private async Task<T?> PickRandom<T>(DateOnly today) where T : class, IPlayable
+    private async Task<T?> PickRandom<T>(DateOnly today, Action<T>? onNewPick) where T : class, IPlayable
     {
         var cutoff = today.AddDays(-CooldownDays);
 
@@ -33,6 +33,8 @@ public class DailyPickRepository(GameDbContext db, ILogger<DailyPickRepository> 
 
         var pick = available[Random.Shared.Next(available.Count)];
         pick.LastTimePlayed = today;
+        onNewPick?.Invoke(pick);
+
         await db.SaveChangesAsync();
 
         logger.Success($"Sélection du jour : {pick.DisplayName}");

@@ -5,23 +5,14 @@ using QuiSNCF.Models;
 
 namespace QuiSNCF.Repository;
 
-public class WordRepository(GameDbContext db, ILogger<WordRepository> logger) : IWordRepository
+public class WordRepository(GameDbContext db, ILogger<WordRepository> logger, DailyPickRepository picker) : IWordRepository
 {
     public async Task<List<Word>> GetWords()
     {
         return await db.Words.ToListAsync();
     }
     
-    public async Task<Word?> GetOrPickTodayWord()
-    {
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        var todaysWord = await db.Words.Where(w => w.LastTimePlayed == today).FirstOrDefaultAsync();
-
-        if (todaysWord != null)
-            return todaysWord;
-
-        return await GetRandomWord();
-    }
+    public async Task<Word?> GetOrPickTodayWord() => await  picker.GetOrPickToday<Word>();
 
     private async Task<Word?> GetRandomWord()
     {
