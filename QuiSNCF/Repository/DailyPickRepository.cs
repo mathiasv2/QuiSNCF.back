@@ -3,7 +3,7 @@ using QuiSNCF.Database;
 
 namespace QuiSNCF.Repository;
 
-public class DailyPickRepository(GameDbContext db, ILogger logger)
+public class DailyPickRepository(GameDbContext db, ILogger<DailyPickRepository> logger)
 {
     private const int CooldownDays = 40;
 
