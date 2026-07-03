@@ -13,7 +13,8 @@ public class DailyPickRepository(GameDbContext db, ILogger<DailyPickRepository> 
 
         var todaysPick = await db.Set<T>()
             .FirstOrDefaultAsync(x => x.LastTimePlayed == today);
-
+        
+        
         if (todaysPick != null)
             return todaysPick;
 

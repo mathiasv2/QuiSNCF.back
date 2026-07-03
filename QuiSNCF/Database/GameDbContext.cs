@@ -11,6 +11,7 @@ public class GameDbContext : Microsoft.EntityFrameworkCore.DbContext
     public DbSet<Station> Stations { get; set; }
     public DbSet<Word>  Words { get; set; }
     public DbSet<DailyPlay> DailyPlays { get; set; } 
+    public DbSet<City> Cities { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -36,6 +37,9 @@ public class GameDbContext : Microsoft.EntityFrameworkCore.DbContext
         modelBuilder.Entity<DailyPlay>()
             .HasIndex(dp => new { dp.PlayerId, dp.GameType, dp.PlayedDate })
             .HasDatabaseName("IX_DailyPlays_PlayerId_GameType_PlayedDate");
+        
+        modelBuilder.Entity<City>()
+            .HasKey(x => x.CityId);
         
         base.OnModelCreating(modelBuilder);
     }

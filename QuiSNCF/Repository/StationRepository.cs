@@ -7,22 +7,6 @@ namespace QuiSNCF.Repository;
 
 public class StationRepository(GameDbContext db, ILogger<StationRepository> logger, DailyPickRepository picker) : IStationRepository
 {
-    public async Task<Station?> GetRandomStation()
-    {
-        logger.LogInformation($"Sélection de la gare du jour à {TimeOnly.FromDateTime(DateTime.Now)}");
-        
-        var station = await  picker.GetOrPickToday<Station>();
-        
-        logger.Success($"Station du jour sélectionnée : " +
-                       $"Ville : {station.City}," +
-                       $"Dernière fois qu'elle a été joué : {station.LastTimePlayed};" +
-                       $"Nom de la gare : {station.Name}");
-        
-        await UpdateStationLastTimePlayed(station);
-        
-        return station;
-    }
-
     public async Task<List<Station>> GetStations()
     {
         return await db.Stations.ToListAsync();
@@ -34,15 +18,7 @@ public class StationRepository(GameDbContext db, ILogger<StationRepository> logg
         s.RandomX = x;
         s.RandomY = y;
     });
-
-    private async Task<string> GetTodayStationsCity()
-    {
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        var station = await db.Stations.Where(x =>  x.LastTimePlayed == today).FirstOrDefaultAsync();
-        if (station != null)
-            return station.City;
-        return null;
-    }
+    
 
     public async Task UpdateStationLastTimePlayed(Station station)
     {
@@ -90,11 +66,5 @@ public class StationRepository(GameDbContext db, ILogger<StationRepository> logg
         
         logger.Success($"Zoom du jour : {x},{y}");
         return (x, y);
-    }
-
-    public async Task<bool> IsInputRight(string input)
-    {
-        string todaysCity = await GetTodayStationsCity();
-        return input.ToLower() == todaysCity.ToLower();
     }
 }
