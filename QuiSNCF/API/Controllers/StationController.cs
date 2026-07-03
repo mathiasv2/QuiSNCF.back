@@ -9,12 +9,12 @@ namespace QuiSNCF.API.Controllers;
 [EnableRateLimiting("fixed")]
 [Route("api/[controller]")]
 [ApiController]
-public class StationController(IStationRepository repo) : ControllerBase
+public class StationController(IStationRepository repo, DailyPickRepository picker) : ControllerBase
 {
     [HttpGet("todaysStation")]
     public async Task<IActionResult> GetRandomStation()
     {
-        var station = await repo.GetOrPickTodayStation();
+        var station = await picker.GetOrPickToday<Station>();
         if (station == null)
             return null;
         return Ok(station);
