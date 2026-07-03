@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using QuiSNCF.Database;
 
 namespace QuiSNCF.Repository;
 
-public class DailyPickRepository(DbContext db, ILogger logger)
+public class DailyPickRepository(GameDbContext db, ILogger logger)
 {
     private const int CooldownDays = 40;
 
