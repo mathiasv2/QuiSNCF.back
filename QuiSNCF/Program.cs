@@ -120,7 +120,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRateLimiter();
-app.UseMiddleware<ApiKeyMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 
