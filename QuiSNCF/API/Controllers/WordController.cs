@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using QuiSNCF.DTO;
+using QuiSNCF.Middleware;
 using QuiSNCF.Repository;
 
 namespace QuiSNCF.API.Controllers;
@@ -19,6 +20,7 @@ public class WordController(IWordRepository repo): ControllerBase
         return Ok(station);
     }
 
+    [ApiKey]
     [HttpPost("createWord")]
     public async Task<IActionResult> CreateWord(CreateWordDTO word)
     {
@@ -29,6 +31,7 @@ public class WordController(IWordRepository repo): ControllerBase
         });
     }
 
+    [ApiKey]
     [HttpPut("updateworddefinition/{id}")]
     public async Task<IActionResult> UpdateWordDefinition(UpdateWordDefinitionDTO wordDto, int id)
     {
@@ -39,6 +42,7 @@ public class WordController(IWordRepository repo): ControllerBase
         });
     }
     
+    [ApiKey]
     [HttpPut("updateword/{id}")]
     public async Task<IActionResult> UpdateWord(UpdateWordDTO wordDto, int id)
     {
@@ -49,6 +53,7 @@ public class WordController(IWordRepository repo): ControllerBase
         });
     }
     
+    [ApiKey]
     [HttpGet("all")]
     public async Task<IActionResult> GetAll()
     {

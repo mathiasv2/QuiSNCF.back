@@ -1,35 +1,32 @@
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
 namespace QuiSNCF.Middleware;
 
-public class ApiKeyMiddleware(RequestDelegate next, IConfiguration config)
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
+public class ApiKeyAttribute : Attribute, IAsyncActionFilter
 {
     private const string ApiKeyHeader = "X-Api-Key";
 
-    public async Task InvokeAsync(HttpContext context)
+    public async Task OnActionExecutionAsync(
+        ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        var path = context.Request.Path.Value?.ToLower();
+        var config = context.HttpContext.RequestServices
+            .GetRequiredService<IConfiguration>();
 
-        var protectedRoutes = new[]
-        {
-            "/api/station/createstation",
-            "/api/word/createword",
-            "/api/station/updateStation",
-            "/api/word/updateword",
-            "/api/station/all",
-            "/api/word/all",
-            "/api/word/updateworddefinition"
-        };
+        var expected = config["ApiKey:Secret"];
 
-        if (protectedRoutes.Any(r => path?.StartsWith(r.ToLower()) == true))
+        if (!context.HttpContext.Request.Headers.TryGetValue(ApiKeyHeader, out var provided)
+            || string.IsNullOrEmpty(expected)
+            || !CryptographicOperations.FixedTimeEquals(
+                System.Text.Encoding.UTF8.GetBytes(provided.ToString()),
+                System.Text.Encoding.UTF8.GetBytes(expected)))
         {
-            if (!context.Request.Headers.TryGetValue(ApiKeyHeader, out var key)
-                || key != config["ApiKey:Secret"])
-            {
-                context.Response.StatusCode = 401;
-                await context.Response.WriteAsync("Non autorisé");
-                return;
-            }
+            context.Result = new UnauthorizedObjectResult("Non autorisé");
+            return;
         }
 
-        await next(context);
+        await next();
     }
 }
