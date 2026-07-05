@@ -6,7 +6,6 @@ using QuiSNCF.Repository;
 
 namespace QuiSNCF.API.Controllers;
 
-[EnableRateLimiting("fixed")]
 [Route("api/[controller]")]
 [ApiController]
 public class WordController(IWordRepository repo): ControllerBase
