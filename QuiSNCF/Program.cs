@@ -1,4 +1,5 @@
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using QuiSNCF.Database;
 using Microsoft.EntityFrameworkCore;
@@ -27,15 +28,21 @@ builder.Services.AddEndpointsApiExplorer();
 // RATE LIMITER
 builder.Services.AddRateLimiter(options =>
 {
-    options.AddFixedWindowLimiter("fixed", opt =>
-    {
-        opt.PermitLimit = 30;
-        opt.Window = TimeSpan.FromMinutes(1);
-        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        opt.QueueLimit = 0;
-    });
-    
     options.RejectionStatusCode = 429;
+
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+    {
+        var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        return RateLimitPartition.GetFixedWindowLimiter(ip, _ =>
+            new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 30,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            });
+    });
 });
 
 var allowedOrigins = builder.Configuration
@@ -52,9 +59,19 @@ builder.Services.AddCors(options =>
     });
 });
 
+
 var app = builder.Build();
 
 app.UseCors("AllowFrontend");
+
+var forwardedOptions = new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor
+};
+// Vider les listes par défaut pour accepter le proxy de l'ingress
+forwardedOptions.KnownNetworks.Clear();
+forwardedOptions.KnownProxies.Clear();
+app.UseForwardedHeaders(forwardedOptions);
 
 using (var scope = app.Services.CreateScope())
 {
@@ -103,7 +120,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRateLimiter();
-app.UseMiddleware<ApiKeyMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 

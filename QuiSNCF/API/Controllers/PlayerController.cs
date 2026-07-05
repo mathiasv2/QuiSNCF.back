@@ -3,12 +3,12 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using QuiSNCF.DTO;
+using QuiSNCF.Middleware;
 using QuiSNCF.Models;
 using QuiSNCF.Repository;
 
 namespace QuiSNCF.API.Controllers;
 
-[EnableRateLimiting("fixed")]
 [Route("api/[controller]")]
 [ApiController]
 public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository> logger) : ControllerBase
@@ -67,6 +67,8 @@ public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository>
     {
         return await repo.GetScoreByGameAndPlayer(name, gameType);
     }
+    
+    [ApiKey]
     [HttpGet("count")]
     public async Task<int> GetPlayersCount([FromQuery] GameType? gameType)
     {
