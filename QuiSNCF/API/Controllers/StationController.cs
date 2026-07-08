@@ -36,6 +36,14 @@ public class StationController(IStationRepository repo) : ControllerBase
         repo.UpdateStation(station, id);
         return Ok("Station updated");   
     }
+    
+    [ApiKey]
+    [HttpPut("updateStationName/{id}")]
+    public async Task<IActionResult> UpdateStation([FromBody] string name, int id)
+    {
+        repo.UpdateStationName(name, id);
+        return Ok("Station updated");   
+    }
 
     [ApiKey]
     [HttpGet("all")]
@@ -44,6 +52,8 @@ public class StationController(IStationRepository repo) : ControllerBase
         var stations = await repo.GetStations();
         return Ok(stations);
     }
+    
+    
 
     /*
     

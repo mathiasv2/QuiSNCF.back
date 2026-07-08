@@ -12,5 +12,6 @@ public interface IStationRepository
     Task<bool> IsInputRight(string input);
     public void UpdateStation(UpdateStationDTO updateStation, int id);
     Task<List<Station>> GetStations();
+    void UpdateStationName(string stationName, int id);
 
 }
