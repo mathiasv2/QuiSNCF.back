@@ -39,7 +39,7 @@ public class StationController(IStationRepository repo) : ControllerBase
     
     [ApiKey]
     [HttpPut("updateStationName/{id}")]
-    public async Task<IActionResult> UpdateStation([FromBody] string name, int id)
+    public async Task<IActionResult> UpdateStation([FromBody] UpdateStationNameDTO name, int id)
     {
         repo.UpdateStationName(name, id);
         return Ok("Station updated");   
