@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using QuiSNCF.DTO;
+using QuiSNCF.Middleware;
 using QuiSNCF.Models;
 using QuiSNCF.Repository;
 
 namespace QuiSNCF.API.Controllers;
 
-[EnableRateLimiting("fixed")]
 [Route("api/[controller]")]
 [ApiController]
 public class StationController(IStationRepository repo) : ControllerBase
@@ -21,7 +21,7 @@ public class StationController(IStationRepository repo) : ControllerBase
     }
 
 
-    
+    [ApiKey]
     [HttpPost("createStation")]
     public async Task<IActionResult> CreateStation(CreateStationDTO station)
     {
@@ -29,19 +29,31 @@ public class StationController(IStationRepository repo) : ControllerBase
         return Ok("Station created");
     }
     
+    [ApiKey]
     [HttpPut("updateStation/{id}")]
     public async Task<IActionResult> UpdateStation(UpdateStationDTO station, int id)
     {
         repo.UpdateStation(station, id);
         return Ok("Station updated");   
     }
+    
+    [ApiKey]
+    [HttpPut("updateStationName/{id}")]
+    public async Task<IActionResult> UpdateStation([FromBody] UpdateStationNameDTO name, int id)
+    {
+        repo.UpdateStationName(name, id);
+        return Ok("Station updated");   
+    }
 
+    [ApiKey]
     [HttpGet("all")]
     public async Task<IActionResult> GetAll()
     {
         var stations = await repo.GetStations();
         return Ok(stations);
     }
+    
+    
 
     /*
     

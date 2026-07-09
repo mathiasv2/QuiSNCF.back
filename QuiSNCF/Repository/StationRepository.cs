@@ -57,6 +57,13 @@ public class StationRepository(GameDbContext db, ILogger<StationRepository> logg
         station.Hint = updateStation.Hint;
         db.SaveChanges();
     }
+    
+    public void UpdateStationName(UpdateStationNameDTO dto, int id)
+    {
+        var station = db.Stations.FirstOrDefault(x => x.StationId == id);
+        station.Name = dto.Name;
+        db.SaveChanges();
+    }
 
     private (double x, double y) TodayRandomZoom()
     {

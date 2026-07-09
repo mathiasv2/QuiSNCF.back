@@ -62,6 +62,9 @@ namespace QuiSNCF.Migrations
                     b.Property<int>("Score")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Season")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Tries")
                         .HasColumnType("integer");
 
@@ -86,6 +89,9 @@ namespace QuiSNCF.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("Score")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Season")
                         .HasColumnType("integer");
 
                     b.Property<int>("Tries")

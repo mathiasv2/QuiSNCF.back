@@ -1,9 +1,12 @@
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using QuiSNCF.Database;
 using Microsoft.EntityFrameworkCore;
+using QuiSNCF.Mappers;
 using QuiSNCF.Middleware;
 using QuiSNCF.Repository;
+using QuiSNCF.Service;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,23 +24,28 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IStationRepository, StationRepository>();
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IWordRepository, WordRepository>();
-builder.Services.AddScoped<ICityRepository, CityRepository>();
-builder.Services.AddScoped<DailyPickRepository>();
-
+builder.Services.AddScoped<SNCFApiRequest>();
+builder.Services.AddScoped<SNCFApiMapperToDepartureView>();
 builder.Services.AddEndpointsApiExplorer();
 
 // RATE LIMITER
 builder.Services.AddRateLimiter(options =>
 {
-    options.AddFixedWindowLimiter("fixed", opt =>
-    {
-        opt.PermitLimit = 30;
-        opt.Window = TimeSpan.FromMinutes(1);
-        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        opt.QueueLimit = 0;
-    });
-    
     options.RejectionStatusCode = 429;
+
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+    {
+        var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        return RateLimitPartition.GetFixedWindowLimiter(ip, _ =>
+            new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 30,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            });
+    });
 });
 
 var allowedOrigins = builder.Configuration
@@ -54,9 +62,19 @@ builder.Services.AddCors(options =>
     });
 });
 
+
 var app = builder.Build();
 
 app.UseCors("AllowFrontend");
+
+var forwardedOptions = new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor
+};
+// Vider les listes par défaut pour accepter le proxy de l'ingress
+forwardedOptions.KnownNetworks.Clear();
+forwardedOptions.KnownProxies.Clear();
+app.UseForwardedHeaders(forwardedOptions);
 
 using (var scope = app.Services.CreateScope())
 {
@@ -82,14 +100,6 @@ using (var scope = app.Services.CreateScope())
             await context.Database.ExecuteSqlRawAsync(sql);
         }
         
-        if (!context.Cities.Any())
-        {
-            var sql = await File.ReadAllTextAsync(
-                Path.Combine(AppContext.BaseDirectory, "Seeds", "city.sql"));
-            Console.WriteLine("Peuplement de la table Cities");
-            await context.Database.ExecuteSqlRawAsync(sql);
-        }
-        
         
 
         Console.WriteLine("Database migrations OK.");
@@ -112,8 +122,9 @@ if (app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
+app.UseHttpsRedirection();
+app.UseExceptionHandler("/error");
 app.UseRateLimiter();
-app.UseMiddleware<ApiKeyMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 

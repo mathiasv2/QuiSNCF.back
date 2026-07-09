@@ -3,12 +3,13 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using QuiSNCF.DTO;
+using QuiSNCF.Exceptions;
+using QuiSNCF.Middleware;
 using QuiSNCF.Models;
 using QuiSNCF.Repository;
 
 namespace QuiSNCF.API.Controllers;
 
-[EnableRateLimiting("fixed")]
 [Route("api/[controller]")]
 [ApiController]
 public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository> logger) : ControllerBase
@@ -28,10 +29,15 @@ public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository>
             logger.ErrorColored($"Il a essayé de me couiller lui : {player.Name}, essai : {player.Tries} :");
             return BadRequest("Nombre d'essais invalide");
         }
-            
-        int finalScore = await repo.SavePlayAsync(player, player.GameType);
-
-        return Ok(finalScore);
+        try
+        {
+            int finalScore = await repo.SavePlayAsync(player, player.GameType);
+            return Ok(finalScore);
+        }
+        catch (AlreadyPlayedException)
+        {
+            return Conflict("Vous avez déjà joué aujourd'hui");
+        }
     }
 
     /*
@@ -50,16 +56,16 @@ public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository>
     }
     */
 
-    [HttpGet("getTodayBillboard/{gameType}")]
-    public async Task<List<PlayerScoreDTO>> GetTodayBillboard(GameType gameType)
+    [HttpGet("getBillboardByGameType/{gameType}/{season}")]
+    public async Task<List<PlayerScoreDTO>> GetTodayBillboard(GameType gameType, int season)
     {
-        return await repo.GetBillboardByGame(gameType);
+        return await repo.GetBillboardByGame(gameType, season);
     }
 
-    [HttpGet("getBillboard")]
-    public async Task<List<Player>> GetBillboard()
+    [HttpGet("getBillboard/{season}")]
+    public async Task<List<Player>> GetBillboard(int season)
     {
-        return await repo.GetBillboard();
+        return await repo.GetBillboard(season);
     }
 
     [HttpGet("getByName/{name}/{gameType}")]
@@ -67,10 +73,25 @@ public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository>
     {
         return await repo.GetScoreByGameAndPlayer(name, gameType);
     }
+    
+    [ApiKey]
     [HttpGet("count")]
     public async Task<int> GetPlayersCount([FromQuery] GameType? gameType)
     {
-        return await repo.GetPlayersCount(gameType);
+        return repo.GetPlayersCount(gameType);
     }
+
+    [HttpGet("best/{season}")]
+    public IActionResult GetBestPlayerBySeason(int season)
+    {
+        return Ok(repo.GetBestPlayerBySeason(season));
+    }
+
+    [HttpGet("total/{name}/{gameType}")]
+    public async Task<int> GetTotalScoreByPlayerAndGameType(GameType gameType, string name)
+    {
+        return await repo.GetTotalScoreByPlayerAndGameType(name, gameType);
+    }
+    
 
 }

@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using QuiSNCF.Database;
 using QuiSNCF.DTO;
+using QuiSNCF.Exceptions;
 using QuiSNCF.Models;
 
 namespace QuiSNCF.Repository;
 
-public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger) : IPlayerRepository
+public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger, IConfiguration config) : IPlayerRepository
 {
     public async Task<List<Player>> GetPlayers()
     {
@@ -77,11 +78,18 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
             _    => 1f
         };
     }
-    
-    public async Task<List<PlayerScoreDTO>> GetBillboardByGame(GameType gameType)
+
+    public async Task<int> GetTotalScoreByPlayerAndGameType(string playerName, GameType gameType)
     {
         return await db.DailyPlays
-            .Where(dp => dp.GameType == gameType)
+            .Where(x => x.Player.Name.Trim().ToLower() == playerName.Trim().ToLower() && x.GameType == gameType)
+            .SumAsync(x=> x.Score);
+    }
+    
+    public async Task<List<PlayerScoreDTO>> GetBillboardByGame(GameType gameType, int season)
+    {
+        return await db.DailyPlays
+            .Where(dp => dp.GameType == gameType && dp.Season == season)
             .GroupBy(dp => dp.Player.Name)
             .Select(g => new PlayerScoreDTO
             {
@@ -90,6 +98,18 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
             })
             .OrderByDescending(p => p.Score)
             .ToListAsync();
+    }
+
+    public PlayerScoreDTO GetBestPlayerBySeason(int season)
+    {
+        return db.Players.OrderByDescending(p => p.Score)
+            .Where(x =>  x.Season == season)
+            .Select(x => new PlayerScoreDTO()
+            {
+                Name = x.Name,
+                Score = x.Score,
+            })
+            .First();
     }
 
 
@@ -109,8 +129,6 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
             .ToListAsync();
     }
     
-   
-    
     
     public async Task<bool> DoesPlayerExist(string name)
     {
@@ -119,9 +137,9 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
     }
     
 
-    public async Task<List<Player>> GetBillboard()
+    public async Task<List<Player>> GetBillboard(int season)
     {
-        var players = await db.Players.OrderByDescending(x => x.Score).ToListAsync();
+        var players = await db.Players.Where(x => x.Season == season).OrderByDescending(x => x.Score).ToListAsync();
         return players;
     }
 
@@ -150,6 +168,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
             Tries = 0,
             Name = player.Name,
             Score = 0,
+            Season = 0
         };
         
         await db.Players.AddAsync(newPlayer);
@@ -160,6 +179,8 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
     
     public async Task<int> SavePlayAsync(CreatePlayerDTO dto, GameType gameType)
     {
+        var season = config.GetValue<int>("Season");
+        
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var player = await GetPlayerByName(dto.Name);
 
@@ -174,9 +195,9 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         
         if (alreadyPlayed)
         {
-            logger.LogWarning("[TRICHEUR] {PlayerName} a déjà joué en mode {GameType} aujourd'hui",
-                dto.Name, gameType);
-            throw new Exception("Joueur a essayé de tricher");
+            logger.WarningColored($"[TRICHEUR] {dto.Name} a déjà joué en mode {dto.GameType} aujourd'hui");
+            throw new AlreadyPlayedException(dto.Name);
+
         }
         
         var baseScore = CalculateScore(dto.Tries);
@@ -191,7 +212,8 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
             GameType = gameType,
             Score = finalScore,
             Tries = dto.Tries,
-            PlayedDate = today
+            PlayedDate = today,
+            Season = season
         };
         
         
@@ -208,16 +230,19 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
 
     private async Task UpdatePlayerScore(string playersName, int score, int tries)
     { 
+        var season = config.GetValue<int>("Season");
+
         var player = await GetPlayerByName(playersName);
         
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
         player.Score += score;
         player.Tries += tries;
+        player.Season = season;
         await db.SaveChangesAsync();
     }
 
-    public async Task<int> GetPlayersCount(GameType? gametype)
+    public int GetPlayersCount(GameType? gametype)
     {
         return gametype == null 
             ? db.DailyPlays.GroupBy(x => x.PlayerId).Count()  
