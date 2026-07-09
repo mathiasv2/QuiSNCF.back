@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using QuiSNCF.Database;
 using QuiSNCF.DTO;
+using QuiSNCF.Exceptions;
 using QuiSNCF.Models;
 
 namespace QuiSNCF.Repository;
@@ -194,9 +195,9 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         
         if (alreadyPlayed)
         {
-            logger.LogWarning("[TRICHEUR] {PlayerName} a déjà joué en mode {GameType} aujourd'hui",
+            logger.LogError("[TRICHEUR] {PlayerName} a déjà joué en mode {GameType} aujourd'hui",
                 dto.Name, gameType);
-            throw new Exception("Joueur a essayé de tricher");
+            throw new AlreadyPlayedException(dto.Name);
         }
         
         var baseScore = CalculateScore(dto.Tries);

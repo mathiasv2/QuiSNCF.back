@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using QuiSNCF.DTO;
+using QuiSNCF.Exceptions;
 using QuiSNCF.Middleware;
 using QuiSNCF.Models;
 using QuiSNCF.Repository;
@@ -28,10 +29,15 @@ public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository>
             logger.ErrorColored($"Il a essayé de me couiller lui : {player.Name}, essai : {player.Tries} :");
             return BadRequest("Nombre d'essais invalide");
         }
-            
-        int finalScore = await repo.SavePlayAsync(player, player.GameType);
-
-        return Ok(finalScore);
+        try
+        {
+            int finalScore = await repo.SavePlayAsync(player, player.GameType);
+            return Ok(finalScore);
+        }
+        catch (AlreadyPlayedException)
+        {
+            return Conflict("Vous avez déjà joué aujourd'hui");
+        }
     }
 
     /*
