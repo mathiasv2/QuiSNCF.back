@@ -195,7 +195,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
         
         if (alreadyPlayed)
         {
-            logger.WarningColored("[TRICHEUR] {PlayerName} a déjà joué en mode {GameType} aujourd'hui");
+            logger.WarningColored($"[TRICHEUR] {dto.Name} a déjà joué en mode {dto.GameType} aujourd'hui");
             throw new AlreadyPlayedException(dto.Name);
 
         }
