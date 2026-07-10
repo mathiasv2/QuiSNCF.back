@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using QuiSNCF.Database;
 using Microsoft.EntityFrameworkCore;
+using QuiSNCF.Mappers;
 using QuiSNCF.Middleware;
 using QuiSNCF.Repository;
+using QuiSNCF.Service;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +24,8 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IStationRepository, StationRepository>();
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IWordRepository, WordRepository>();
-
+builder.Services.AddScoped<SNCFApiRequest>();
+builder.Services.AddScoped<SNCFApiMapperToDepartureView>();
 builder.Services.AddEndpointsApiExplorer();
 
 // RATE LIMITER
@@ -119,6 +122,7 @@ if (app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
+app.UseHttpsRedirection();
 app.UseExceptionHandler("/error");
 app.UseRateLimiter();
 app.UseAuthorization();

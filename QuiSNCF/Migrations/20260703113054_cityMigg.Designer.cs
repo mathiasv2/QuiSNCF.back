@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using QuiSNCF.Database;
@@ -11,9 +12,11 @@ using QuiSNCF.Database;
 namespace QuiSNCF.Migrations
 {
     [DbContext(typeof(GameDbContext))]
-    partial class GameDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260703113054_cityMigg")]
+    partial class cityMigg
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,9 +65,6 @@ namespace QuiSNCF.Migrations
                     b.Property<int>("Score")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Season")
-                        .HasColumnType("integer");
-
                     b.Property<int>("Tries")
                         .HasColumnType("integer");
 
@@ -89,9 +89,6 @@ namespace QuiSNCF.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("Score")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Season")
                         .HasColumnType("integer");
 
                     b.Property<int>("Tries")

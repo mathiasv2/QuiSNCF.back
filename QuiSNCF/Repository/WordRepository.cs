@@ -5,51 +5,16 @@ using QuiSNCF.Models;
 
 namespace QuiSNCF.Repository;
 
-public class WordRepository(GameDbContext db, ILogger<WordRepository> logger) : IWordRepository
+public class WordRepository(GameDbContext db, ILogger<WordRepository> logger, DailyPickRepository picker) : IWordRepository
 {
     public async Task<List<Word>> GetWords()
     {
         return await db.Words.ToListAsync();
     }
     
-    public async Task<Word?> GetOrPickTodayWord()
-    {
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        var todaysWord = await db.Words.Where(w => w.LastTimePlayed == today).FirstOrDefaultAsync();
+    public async Task<Word?> GetOrPickTodayWord() => await  picker.GetOrPickToday<Word>();
 
-        if (todaysWord != null)
-            return todaysWord;
 
-        return await GetRandomWord();
-    }
-
-    private async Task<Word?> GetRandomWord()
-    {
-        var today = DateOnly.FromDateTime(DateTime.Today);
-
-        var available = await db.Words
-            .Where(w => w.LastTimePlayed < today.AddDays(-40))
-            .ToListAsync();
-
-        if (!available.Any())
-            return null;
-
-        var word = available[new Random().Next(available.Count)];
-        word.LastTimePlayed = today;
-        await db.SaveChangesAsync();
-
-        logger.Success($"Mot du jour sélectionné : {word.WordName}");
-        return word;
-    }
-
-    public async Task<bool> IsInputRight(string input)
-    {
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        var word = await db.Words.Where(w => w.LastTimePlayed == today).FirstOrDefaultAsync();
-
-        if (word == null) return false;
-        return string.Equals(input.Trim(), word.WordName.Trim(), StringComparison.OrdinalIgnoreCase);
-    }
 
     public async Task CreateWord(CreateWordDTO word)
     {

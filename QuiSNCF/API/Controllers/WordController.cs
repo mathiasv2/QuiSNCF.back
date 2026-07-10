@@ -8,15 +8,15 @@ namespace QuiSNCF.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class WordController(IWordRepository repo): ControllerBase
+public class WordController(IWordRepository repo, DailyPickRepository picker): ControllerBase
 {
     [HttpGet("todaysWord")]
     public async Task<IActionResult> GetRandomWord()
     {
-        var station = await repo.GetOrPickTodayWord();
-        if (station == null)
+        var word = await picker.GetOrPickToday<Word>();
+        if (word == null)
             return null;
-        return Ok(station);
+        return Ok(word);
     }
 
     [ApiKey]
