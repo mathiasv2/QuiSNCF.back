@@ -24,6 +24,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IStationRepository, StationRepository>();
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IWordRepository, WordRepository>();
+builder.Services.AddScoped<DailyPickRepository>();
 builder.Services.AddScoped<SNCFApiRequest>();
 builder.Services.AddScoped<SNCFApiMapperToDepartureView>();
 builder.Services.AddEndpointsApiExplorer();
