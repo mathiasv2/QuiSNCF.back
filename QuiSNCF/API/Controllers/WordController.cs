@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using QuiSNCF.DTO;
 using QuiSNCF.Middleware;
+using QuiSNCF.Models;
 using QuiSNCF.Repository;
 
 namespace QuiSNCF.API.Controllers;
