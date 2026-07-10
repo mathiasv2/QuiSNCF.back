@@ -61,7 +61,7 @@ public class StationRepository(GameDbContext db, ILogger<StationRepository> logg
     public void UpdateStationName(UpdateStationNameDTO dto, int id)
     {
         var station = db.Stations.FirstOrDefault(x => x.StationId == id);
-        station.Name = dto.Name;
+        station.City = dto.Name;
         db.SaveChanges();
     }
 

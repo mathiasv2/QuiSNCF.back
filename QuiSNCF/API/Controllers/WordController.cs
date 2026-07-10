@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using QuiSNCF.DTO;
-using QuiSNCF.Models;
+using QuiSNCF.Middleware;
 using QuiSNCF.Repository;
 
 namespace QuiSNCF.API.Controllers;
 
-[EnableRateLimiting("fixed")]
 [Route("api/[controller]")]
 [ApiController]
 public class WordController(IWordRepository repo, DailyPickRepository picker): ControllerBase
@@ -20,6 +19,7 @@ public class WordController(IWordRepository repo, DailyPickRepository picker): C
         return Ok(word);
     }
 
+    [ApiKey]
     [HttpPost("createWord")]
     public async Task<IActionResult> CreateWord(CreateWordDTO word)
     {
@@ -30,6 +30,7 @@ public class WordController(IWordRepository repo, DailyPickRepository picker): C
         });
     }
 
+    [ApiKey]
     [HttpPut("updateworddefinition/{id}")]
     public async Task<IActionResult> UpdateWordDefinition(UpdateWordDefinitionDTO wordDto, int id)
     {
@@ -40,6 +41,7 @@ public class WordController(IWordRepository repo, DailyPickRepository picker): C
         });
     }
     
+    [ApiKey]
     [HttpPut("updateword/{id}")]
     public async Task<IActionResult> UpdateWord(UpdateWordDTO wordDto, int id)
     {
@@ -50,6 +52,7 @@ public class WordController(IWordRepository repo, DailyPickRepository picker): C
         });
     }
     
+    [ApiKey]
     [HttpGet("all")]
     public async Task<IActionResult> GetAll()
     {
