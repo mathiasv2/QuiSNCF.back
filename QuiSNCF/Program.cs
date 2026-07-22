@@ -102,7 +102,7 @@ using (var scope = app.Services.CreateScope())
             await context.Database.ExecuteSqlRawAsync(sql);
         }
         
-        if (!context.Words.Any())
+        if (!context.Cities.Any())
         {
             var sql = await File.ReadAllTextAsync(
                 Path.Combine(AppContext.BaseDirectory, "Seeds", "city.sql"));
