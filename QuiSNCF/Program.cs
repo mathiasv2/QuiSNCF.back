@@ -102,7 +102,13 @@ using (var scope = app.Services.CreateScope())
             await context.Database.ExecuteSqlRawAsync(sql);
         }
         
-        
+        if (!context.Words.Any())
+        {
+            var sql = await File.ReadAllTextAsync(
+                Path.Combine(AppContext.BaseDirectory, "Seeds", "city.sql"));
+            Console.WriteLine("Peuplement de la table Cities");
+            await context.Database.ExecuteSqlRawAsync(sql);
+        }
 
         Console.WriteLine("Database migrations OK.");
     }
