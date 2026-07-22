@@ -7,17 +7,17 @@ namespace QuiSNCF.API.Controllers;
 [Route("api/[controller]")]
 public class CityController(SNCFApiRequest request): ControllerBase
 {
-    [HttpGet("{name}")]
-    public async Task<IActionResult> Get(string name)
+    [HttpGet]
+    public async Task<IActionResult> Get()
     {
-        var result = await request.GetCityId(name);
+        var result = await request.GetCityId();
         return Ok(result);
     }
     
-    [HttpGet("departures/{name}")]
-    public async Task<IActionResult> GetDepartures(string name)
+    [HttpGet("departures/")]
+    public async Task<IActionResult> GetDepartures()
     {
-        var result = await request.GetNextDepartures(name);
+        var result = await request.GetNextDepartures();
         return Ok(result);
     }
 }
