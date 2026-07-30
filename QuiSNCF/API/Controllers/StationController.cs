@@ -17,7 +17,7 @@ public class StationController(IStationRepository repo, DailyPickRepository pick
         var station = await repo.GetOrPickTodayStation();
         if (station == null)
             return null;
-        return Ok(station.ToDto());
+        return Ok(station);
     }
 
 

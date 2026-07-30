@@ -20,7 +20,7 @@ public class WordController(IWordRepository repo, DailyPickRepository picker): C
             return null;
         
         
-        return Ok(word.ToDto());
+        return Ok(word);
     }
 
     [ApiKey]
