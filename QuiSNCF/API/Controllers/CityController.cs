@@ -14,5 +14,19 @@ public class CityController(DailyPickRepository picker): ControllerBase
         bool correct = await picker.IsInputRight<City>(input);
         var cityName = correct ? await picker.GetTodaysAnswer<City>() : null;
         return Ok(new { correct, cityName });
+public class CityController(SNCFApiRequest request): ControllerBase
+{
+    [HttpGet("{name}")]
+    public async Task<IActionResult> Get(string name)
+    {
+        var result = await request.GetCityId(name);
+        return Ok(result);
+    }
+    
+    [HttpGet("departures/{name}")]
+    public async Task<IActionResult> GetDepartures(string name)
+    {
+        var result = await request.GetNextDepartures(name);
+        return Ok(result);
     }
 }
