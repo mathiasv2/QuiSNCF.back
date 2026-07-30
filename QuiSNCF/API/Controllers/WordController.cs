@@ -5,12 +5,13 @@ using QuiSNCF.Mappers;
 using QuiSNCF.Middleware;
 using QuiSNCF.Models;
 using QuiSNCF.Repository;
+using QuiSNCF.Service;
 
 namespace QuiSNCF.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class WordController(IWordRepository repo, DailyPickRepository picker): ControllerBase
+public class WordController(IWordRepository repo, DailyPickRepository picker, PlayProofService proofs): ControllerBase
 {
     [HttpGet("todaysWord")]
     public async Task<IActionResult> GetRandomWord()
@@ -71,10 +72,16 @@ public class WordController(IWordRepository repo, DailyPickRepository picker): C
     }
     
     [HttpPost("checkinput/{input}")]
-    public async Task<IActionResult> CheckInput(string input)
+    public async Task<IActionResult> CheckInput(string input, [FromQuery] string? state)
     {
         bool correct = await picker.IsInputRight<Word>(input);
         var wordName = correct ? await picker.GetTodaysAnswer<Word>() : null;
-        return Ok(new { correct, wordName });
+
+        int tries = proofs.GetCurrentTries(state, GameType.Word);
+        var token = correct
+            ? proofs.Issue(GameType.Word, tries, won: true)
+            : proofs.Issue(GameType.Word, tries + 1, won: false);
+
+        return Ok(new { correct, wordName, token });
     }
 }

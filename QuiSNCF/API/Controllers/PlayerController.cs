@@ -7,12 +7,13 @@ using QuiSNCF.Exceptions;
 using QuiSNCF.Middleware;
 using QuiSNCF.Models;
 using QuiSNCF.Repository;
+using QuiSNCF.Service;
 
 namespace QuiSNCF.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository> logger) : ControllerBase
+public class PlayerController(IPlayerRepository repo, PlayProofService proofs, ILogger<IPlayerRepository> logger) : ControllerBase
 {
     [HttpPost("createPlayer")]
     public async Task<IActionResult> CreatePlayer([FromBody] CreatePlayerDTO player)
@@ -24,13 +25,24 @@ public class PlayerController(IPlayerRepository repo, ILogger<IPlayerRepository>
             return BadRequest("Pseudo invalide");
         }
 
-        if (player.Tries < 0 || player.Tries > 50)
+        if (!proofs.TryValidate(player.Proof, out var proof)
+            || proof!.GameType != player.GameType
+            || !proof.IsForToday
+            || !proof.Won)
         {
-            logger.ErrorColored($"Il a essayé de me couiller lui : {player.Name}, essai : {player.Tries} :");
+            logger.ErrorColored($"Il a essayé de me couiller lui : {player.Name}, jeton invalide (essais annoncés : {player.Tries})");
+            return BadRequest("Partie non vérifiée");
+        }
+
+        var verifiedTries = proof.Tries + 1;
+        if (verifiedTries < 1 || verifiedTries > 50)
+        {
+            logger.ErrorColored($"Il a essayé de me couiller lui : {player.Name}, essai : {verifiedTries} :");
             return BadRequest("Nombre d'essais invalide");
         }
         try
         {
+            player.Tries = verifiedTries;
             int finalScore = await repo.SavePlayAsync(player, player.GameType);
             return Ok(finalScore);
         }

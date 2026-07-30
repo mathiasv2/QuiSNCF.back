@@ -4,12 +4,13 @@ using QuiSNCF.DTO;
 using QuiSNCF.Middleware;
 using QuiSNCF.Models;
 using QuiSNCF.Repository;
+using QuiSNCF.Service;
 
 namespace QuiSNCF.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class StationController(IStationRepository repo, DailyPickRepository picker) : ControllerBase
+public class StationController(IStationRepository repo, DailyPickRepository picker, PlayProofService proofs) : ControllerBase
 {
     [HttpGet("todaysStation")]
     public async Task<IActionResult> GetRandomStation()
@@ -54,11 +55,17 @@ public class StationController(IStationRepository repo, DailyPickRepository pick
     }
     
     [HttpPost("checkinput/{input}")]
-    public async Task<IActionResult> CheckInput(string input)
+    public async Task<IActionResult> CheckInput(string input, [FromQuery] string? state)
     {
         bool correct = await picker.IsInputRight<Station>(input);
-        var stationName = correct ? await picker.GetTodaysAnswer<Station>() : null;
-        return Ok(new { correct, stationName });
+        var cityName = correct ? await picker.GetTodaysAnswer<Station>() : null;
+
+        int tries = proofs.GetCurrentTries(state, GameType.Station);
+        var token = correct
+            ? proofs.Issue(GameType.Station, tries, won: true)
+            : proofs.Issue(GameType.Station, tries + 1, won: false);
+
+        return Ok(new { correct, cityName, token });
     }
     
     
