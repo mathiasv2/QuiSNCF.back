@@ -13,5 +13,4 @@ public class Station : IPlayable
     public double RandomX { get; set; }
     public double RandomY { get; set; }
     public string DisplayName => City;
-
 }

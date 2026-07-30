@@ -6,7 +6,7 @@ using QuiSNCF.Service;
 namespace QuiSNCF.API.Controllers;
 
 [Route("api/[controller]")]
-public class CityController(DailyPickRepository picker): ControllerBase
+public class CityController(DailyPickRepository picker, SNCFApiRequest request): ControllerBase
 {
     [HttpPost("checkinput/{input}")]
     public async Task<IActionResult> CheckInput(string input)
@@ -14,8 +14,8 @@ public class CityController(DailyPickRepository picker): ControllerBase
         bool correct = await picker.IsInputRight<City>(input);
         var cityName = correct ? await picker.GetTodaysAnswer<City>() : null;
         return Ok(new { correct, cityName });
-public class CityController(SNCFApiRequest request): ControllerBase
-{
+    }
+
     [HttpGet("{name}")]
     public async Task<IActionResult> Get(string name)
     {

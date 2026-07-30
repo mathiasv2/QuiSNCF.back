@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using QuiSNCF.DTO;
+using QuiSNCF.Mappers;
 using QuiSNCF.Middleware;
 using QuiSNCF.Models;
 using QuiSNCF.Repository;
@@ -17,7 +18,9 @@ public class WordController(IWordRepository repo, DailyPickRepository picker): C
         var word = await picker.GetOrPickToday<Word>();
         if (word == null)
             return null;
-        return Ok(word);
+        
+        
+        return Ok(word.ToDto());
     }
 
     [ApiKey]
