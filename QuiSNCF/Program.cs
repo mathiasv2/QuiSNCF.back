@@ -24,6 +24,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IStationRepository, StationRepository>();
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IWordRepository, WordRepository>();
+builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<DailyPickRepository>();
 builder.Services.AddScoped<SNCFApiRequest>();
 builder.Services.AddScoped<SNCFApiMapperToDepartureView>();
@@ -101,7 +102,13 @@ using (var scope = app.Services.CreateScope())
             await context.Database.ExecuteSqlRawAsync(sql);
         }
         
-        
+        if (!context.Cities.Any())
+        {
+            var sql = await File.ReadAllTextAsync(
+                Path.Combine(AppContext.BaseDirectory, "Seeds", "city.sql"));
+            Console.WriteLine("Peuplement de la table Cities");
+            await context.Database.ExecuteSqlRawAsync(sql);
+        }
 
         Console.WriteLine("Database migrations OK.");
     }

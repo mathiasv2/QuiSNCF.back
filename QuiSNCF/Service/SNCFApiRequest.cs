@@ -4,16 +4,20 @@ using System.Text.Json;
 using QuiSNCF.DTO;
 using QuiSNCF.Mappers;
 using QuiSNCF.Models;
+using QuiSNCF.Repository;
 using Departure = QuiSNCF.Models.Departure;
 
 namespace QuiSNCF.Service;
 
-public class SNCFApiRequest(IConfiguration config)
+public class SNCFApiRequest(IConfiguration config, ICityRepository repo)
 {
     string? key = config.GetSection("SNCFApiKey").Value;
     HttpClient _client = new HttpClient();
-    public async Task<string> GetCityId(string cityName)
+    public async Task<string> GetCityId()
     {
+        var city = await repo.GetOrPickRandomCity();
+        string cityName = city.CityName;
+        
         var authValue = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{key}:"));
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
 
@@ -29,10 +33,9 @@ public class SNCFApiRequest(IConfiguration config)
         return result;
     }
     
-    public async Task<List<Departure>> GetNextDepartures(string City)
+    public async Task<List<Departure>> GetNextDepartures()
     {
-
-        var stopAreaId = await GetCityId(City);
+        var stopAreaId = await GetCityId();
         Console.WriteLine(stopAreaId);
         
         var response = await _client.GetAsync(

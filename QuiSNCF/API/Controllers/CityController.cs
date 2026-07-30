@@ -19,14 +19,14 @@ public class CityController(DailyPickRepository picker, SNCFApiRequest request):
     [HttpGet("{name}")]
     public async Task<IActionResult> Get(string name)
     {
-        var result = await request.GetCityId(name);
+        var result = await request.GetCityId();
         return Ok(result);
     }
     
-    [HttpGet("departures/{name}")]
-    public async Task<IActionResult> GetDepartures(string name)
+    [HttpGet("departures/")]
+    public async Task<IActionResult> GetDepartures()
     {
-        var result = await request.GetNextDepartures(name);
+        var result = await request.GetNextDepartures();
         return Ok(result);
     }
 }
