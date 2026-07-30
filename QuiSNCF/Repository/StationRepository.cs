@@ -74,4 +74,6 @@ public class StationRepository(GameDbContext db, ILogger<StationRepository> logg
         logger.Success($"Zoom du jour : {x},{y}");
         return (x, y);
     }
+    
+    
 }

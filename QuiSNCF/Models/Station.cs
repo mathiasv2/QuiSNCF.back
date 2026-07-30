@@ -12,6 +12,6 @@ public class Station : IPlayable
     public DateOnly? LastTimePlayed { get; set; }
     public double RandomX { get; set; }
     public double RandomY { get; set; }
-    public string DisplayName => Name;
+    public string DisplayName => City;
 
 }

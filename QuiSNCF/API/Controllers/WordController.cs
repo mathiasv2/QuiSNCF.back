@@ -66,4 +66,12 @@ public class WordController(IWordRepository repo, DailyPickRepository picker): C
     {
         return await repo.LookUpForWord(word);
     }
+    
+    [HttpPost("checkinput/{input}")]
+    public async Task<IActionResult> CheckInput(string input)
+    {
+        bool correct = await picker.IsInputRight<Word>(input);
+        var wordName = correct ? await picker.GetTodaysAnswer<Word>() : null;
+        return Ok(new { correct, wordName });
+    }
 }

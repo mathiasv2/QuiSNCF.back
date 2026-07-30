@@ -9,7 +9,7 @@ namespace QuiSNCF.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class StationController(IStationRepository repo) : ControllerBase
+public class StationController(IStationRepository repo, DailyPickRepository picker) : ControllerBase
 {
     [HttpGet("todaysStation")]
     public async Task<IActionResult> GetRandomStation()
@@ -51,6 +51,14 @@ public class StationController(IStationRepository repo) : ControllerBase
     {
         var stations = await repo.GetStations();
         return Ok(stations);
+    }
+    
+    [HttpPost("checkinput/{input}")]
+    public async Task<IActionResult> CheckInput(string input)
+    {
+        bool correct = await picker.IsInputRight<Station>(input);
+        var stationName = correct ? await picker.GetTodaysAnswer<Station>() : null;
+        return Ok(new { correct, stationName });
     }
     
     
