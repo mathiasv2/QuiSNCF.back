@@ -9,7 +9,7 @@ namespace QuiSNCF.API.Controllers;
 public class CityController(DailyPickRepository picker): ControllerBase
 {
     [HttpPost("checkinput/{input}")]
-    public async Task<IActionResult> CheckInput(string input)
+    public async Task<IActionResult> CheckInput(GameType gameType, string input)
     {
         bool correct = await picker.IsInputRight<City>(input);
         var cityName = correct ? await picker.GetTodaysAnswer<City>() : null;
