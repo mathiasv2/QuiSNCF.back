@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using QuiSNCF.Database;
 
@@ -40,5 +42,30 @@ public class DailyPickRepository(GameDbContext db, ILogger<DailyPickRepository> 
 
         logger.Success($"Sélection du jour : {pick.DisplayName}");
         return pick;
+    }
+    
+    public async Task<string?> GetTodaysAnswer<T>() where T : class, IPlayable
+    {
+        var pick = await GetOrPickToday<T>();
+        return pick?.DisplayName;
+    }
+
+    public async Task<bool> IsInputRight<T>(string input) where T : class, IPlayable
+    {
+        var answer = await GetTodaysAnswer<T>();
+        return answer != null && Normalize(input) == Normalize(answer);
+    }
+
+    private static string Normalize(string value)
+    {
+        var formD = value.Normalize(NormalizationForm.FormD);
+        var sb = new StringBuilder();
+        foreach (var c in formD)
+        {
+            if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                sb.Append(c);
+        }
+        return sb.ToString().Normalize(NormalizationForm.FormC)
+            .ToLowerInvariant().Replace('-', ' ').Trim();
     }
 }
