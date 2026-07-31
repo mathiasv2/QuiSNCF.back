@@ -28,6 +28,8 @@ builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<DailyPickRepository>();
 builder.Services.AddScoped<SNCFApiRequest>();
 builder.Services.AddScoped<SNCFApiMapperToDepartureView>();
+builder.Services.AddScoped<MailService>();
+
 builder.Services.AddEndpointsApiExplorer();
 
 // RATE LIMITER
