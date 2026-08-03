@@ -69,7 +69,7 @@ public class StationRepository(GameDbContext db, ILogger<StationRepository> logg
     {
         Random rdn = new Random();
         double x = rdn.NextDouble();
-        double y = rdn.NextDouble();
+        double y = 0.3 + rdn.NextDouble() * 0.7;
         
         logger.Success($"Zoom du jour : {x},{y}");
         return (x, y);
