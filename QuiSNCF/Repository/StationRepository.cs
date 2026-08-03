@@ -68,8 +68,8 @@ public class StationRepository(GameDbContext db, ILogger<StationRepository> logg
     private (double x, double y) TodayRandomZoom()
     {
         Random rdn = new Random();
-        double x = rdn.NextDouble();
-        double y = rdn.NextDouble();
+        double x = 0.5;
+        double y = 0.5;
         
         logger.Success($"Zoom du jour : {x},{y}");
         return (x, y);
