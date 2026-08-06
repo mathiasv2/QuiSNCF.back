@@ -21,7 +21,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
 
     private async Task<bool> HasPlayerPlayedToday(string playerName, GameType gameType)
     {
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var today = DateOnly.FromDateTime(DateTime.Today);
 
         return await db.DailyPlays.AnyAsync(dp =>
             dp.Player.Name.Trim().ToLower() == playerName.Trim().ToLower()
@@ -44,7 +44,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
 
     private async Task<float> GetStreakMultiplier(string playerName, GameType gameType)
     {
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var today = DateOnly.FromDateTime(DateTime.Today);
         var yesterday = today.AddDays(-1);
 
         var recentDates = await db.DailyPlays
@@ -181,7 +181,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
     {
         var season = config.GetValue<int>("Season");
         
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var today = DateOnly.FromDateTime(DateTime.Today);
         var player = await GetPlayerByName(dto.Name);
 
         if (player == null)
@@ -234,7 +234,7 @@ public class PlayerRepository(GameDbContext db, ILogger<PlayerRepository> logger
 
         var player = await GetPlayerByName(playersName);
         
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var today = DateOnly.FromDateTime(DateTime.Today);
 
         player.Score += score;
         player.Tries += tries;

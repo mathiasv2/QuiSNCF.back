@@ -63,5 +63,4 @@ public class WordRepository(GameDbContext db, ILogger<WordRepository> logger, Da
         return lines.Any(l => l.Trim().Equals(word.Trim(), StringComparison.OrdinalIgnoreCase));
     }
     
-    
 }
