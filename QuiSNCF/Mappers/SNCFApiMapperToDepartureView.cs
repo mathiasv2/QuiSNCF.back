@@ -7,26 +7,36 @@ namespace QuiSNCF.Mappers;
 
 public class SNCFApiMapperToDepartureView
 {
-    public static Departure Mapping(DTO.Departure d)
+    public static Departure? Mapping(DTO.Departure d)
     {
-        var scheduled = ParseSncfDateTime(d.StopDateTime.BaseDepartureDateTime);
-        var real = ParseSncfDateTime(d.StopDateTime.DepartureDateTime);
-        var delayMinutes = (int)(real - scheduled).TotalMinutes;
+        var scheduled= ParseSncfDateTime(d.StopDateTime?.BaseDepartureDateTime);
+        var real= ParseSncfDateTime(d.StopDateTime?.DepartureDateTime);
 
-        var train = string.IsNullOrEmpty(d.DisplayInformations.CommercialMode)
-            ? d.DisplayInformations.Headsign
-            : $"{d.DisplayInformations.CommercialMode} {d.DisplayInformations.Headsign}";
+        if (scheduled is null && real is null)
+            return null;
+
+        var sched = scheduled ?? real!.Value;
+        var actual = real ?? sched;
+        var delayMinutes = (int)(actual - sched).TotalMinutes;
+
+        var info = d.DisplayInformations;
+        var train = string.IsNullOrEmpty(info.CommercialMode)
+            ? info.Headsign
+            : $"{info.CommercialMode} {info.Headsign}";
 
         return new Departure(
-            ScheduledTime: scheduled.ToString("HH:mm"),
-            Destination: d.DisplayInformations.Direction,
+            ScheduledTime: sched.ToString("HH:mm"),
+            Destination: info.Direction,
             Train: train,
-            Mode: d.DisplayInformations.PhysicalMode,
+            Mode: info.PhysicalMode,
             DelayMinutes: delayMinutes
         );
     }
 
-        
-    private static DateTime ParseSncfDateTime(string raw)
-        => DateTime.ParseExact(raw, "yyyyMMdd'T'HHmmss", CultureInfo.InvariantCulture);
+    private static DateTime? ParseSncfDateTime(string? raw)
+        => DateTime.TryParseExact(raw, "yyyyMMdd'T'HHmmss",
+            CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt)
+            ? dt
+            : null;
+
 }
